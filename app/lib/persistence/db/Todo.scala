@@ -20,8 +20,8 @@ case class TodoTable[P <: JdbcProfile]()(implicit val driver: P)
 
   // --[ declare table ] ----------------------------------------------
   lazy val dsn = Map(
-    "master" -> DataSourceName("ixias.db.mysql://master/to-do-sample"),
-    "slave"  -> DataSourceName("ixias.db.mysql://slave/to-do-sample")
+    "master" -> DataSourceName("ixias.db.mysql://master/to_do_sample"),
+    "slave"  -> DataSourceName("ixias.db.mysql://slave/to_do_sample")
   )
 
   // --[ declare query ] ----------------------------------------------

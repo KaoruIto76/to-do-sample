@@ -10,7 +10,7 @@ import ixias.model._
 import java.time.LocalDateTime
 
 import Todo._
-// model of category
+// model of todo
 case class Todo(
   id:         Option[Id],
   cid:        Category.Id,
