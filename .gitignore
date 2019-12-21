@@ -1,5 +1,6 @@
 logs
 target
+docker/db/data
 /.idea
 /.idea_modules
 /.classpath

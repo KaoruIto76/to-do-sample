@@ -7,6 +7,8 @@ import play.api.mvc._
 import lib.persistence.default._
 import lib.model.Category
 
+import model._
+
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
@@ -23,10 +25,17 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index() = Action.async { implicit req =>
-    val id = Category.Id(1)
+  def index() = Action { implicit req =>
+    val vv = ViewValueHome("home")
+    Ok(views.html.index(vv))
+  }
+
+  def showCategory() = Action.async { implicit req =>
     for {
-      res <- CategoryRepository.get(id)
-    } yield Ok(s"$res")
+      todos <- CategoryRepository.getAll
+    } yield {
+      val vv = ViewValueCategory(todos)
+      Ok(views.html.category(vv))
+    }
   }
 }

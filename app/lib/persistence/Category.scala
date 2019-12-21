@@ -27,6 +27,12 @@ case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
     }
   }
 
+  def getAll: Future[Seq[EntityEmbeddedId]] = {
+    RunDBAction(CategoryTable, "slave") { _
+      .result
+    }
+  }
+
   def add(data:EntityWithNoId):Future[Id] = {
     RunDBAction(CategoryTable) { slick =>
       slick returning slick.map(_.id) += data.v
