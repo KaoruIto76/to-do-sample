@@ -14,16 +14,22 @@ import lib.model.Todo
 import lib.model.Category
 
 case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
-    extends SlickRepository[Category.Id, Category, P]
-    with db.SlickColumnTypes[P]
-    with db.SlickResourceProvider[P]
+  extends SlickRepository[Category.Id, Category, P]
+  with db.SlickColumnTypes[P]
+  with db.SlickResourceProvider[P]
 {
   import api._
 
-   def get(id:Id):Future[Option[EntityEmbeddedId]] = {
+  def get(id:Id):Future[Option[EntityEmbeddedId]] = {
     RunDBAction(CategoryTable, "slave") { _
       .filter(_.id === id)
       .result.headOption
+    }
+  }
+
+  def getAll: Future[Seq[EntityEmbeddedId]] = {
+    RunDBAction(CategoryTable, "slave") { _
+      .result
     }
   }
 

@@ -36,7 +36,7 @@ case class TodoTable[P <: JdbcProfile]()(implicit val driver: P)
     /* @2 */ def cid       = column[Category.Id]   ("category_id", O.UInt64)
     /* @3 */ def title     = column[String]        ("title",       O.Utf8Char255)
     /* @3 */ def body      = column[String]        ("body",        O.Utf8Char255)
-    /* @4 */ def updatedAt = column[LocalDateTime] ("update_at",   O.TsCurrent)
+    /* @4 */ def updatedAt = column[LocalDateTime] ("updated_at",  O.TsCurrent)
     /* @5 */ def createdAt = column[LocalDateTime] ("created_at",  O.Ts)
 
     // All columns as a tuple

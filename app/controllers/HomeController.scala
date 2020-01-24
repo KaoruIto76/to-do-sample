@@ -1,3 +1,9 @@
+/**
+ *
+ * to do sample project
+ *
+ */
+
 package controllers
 
 import javax.inject._
@@ -6,6 +12,8 @@ import play.api.mvc._
 
 import lib.persistence.default._
 import lib.model.Category
+
+import model.ViewValueHome
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -24,9 +32,20 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * a path of `/`.
    */
   def index() = Action.async { implicit req =>
-    val id = Category.Id(1)
     for {
-      res <- CategoryRepository.get(id)
-    } yield Ok(s"$res")
+      categoris <- CategoryRepository.getAll
+      tasks     <- TodoRepository.getAll
+    } yield {
+
+      val vv = ViewValueHome(
+        "home",
+        categoris,
+        tasks,
+        Seq("main.css"),
+        Seq("main.js")
+      )
+
+      Ok(views.html.home(vv))
+    }
   }
 }

@@ -35,8 +35,8 @@ case class CategoryTable[P <: JdbcProfile]()(implicit val driver: P)
     /* @2 */ def name          = column[String]                 ("name",           O.Utf8Char255)
     /* @3 */ def slug          = column[String]                 ("slug",           O.Utf8Char255)
     /* @4 */ def categoryColor = column[Category.CategoryColor] ("category_color", O.UInt8)
-    /* @4 */ def updatedAt     = column[LocalDateTime]          ("update_at",      O.TsCurrent)
-    /* @5 */ def createdAt     = column[LocalDateTime]          ("created_at",     O.Ts)
+    /* @5 */ def updatedAt     = column[LocalDateTime]          ("updated_at",     O.TsCurrent)
+    /* @6 */ def createdAt     = column[LocalDateTime]          ("created_at",     O.Ts)
 
     // All columns as a tuple
     type TableElementTuple = (

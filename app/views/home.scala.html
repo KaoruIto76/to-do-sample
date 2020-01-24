@@ -1,0 +1,19 @@
+@*
+ *
+ * to do sample project
+ *
+ *@
+
+ @(vv: model.ViewValueHome)
+
+ @linkToCategory = @{ controllers.routes.HomeController.index().url }
+ @linkToTodo     = @{ controllers.routes.HomeController.index().url }
+
+ @main(vv) {
+   <ul>
+     <li><a href="@linkToCategory">カテゴリー一覧</a></li>
+     <li><a href="@linkToCategory">Todo一覧</a></li>
+   </ul>
+   @vv
+}
+

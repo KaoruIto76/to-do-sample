@@ -16,9 +16,9 @@ CREATE TABLE `category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO category(name,slug,1) values('フロントエンド','front');
-INSERT INTO category(name,slug,2) values('バックエンド','back');
-INSERT INTO category(name,slug,3) values('インフラ','infra');
+INSERT INTO category(name,slug,category_color) values('フロントエンド','front',1);
+INSERT INTO category(name,slug,category_color) values('バックエンド','back',2);
+INSERT INTO category(name,slug,category_color) values('インフラ','infra',3);
 
 
 CREATE TABLE `to-do` (
@@ -31,8 +31,8 @@ CREATE TABLE `to-do` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO to-do(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに');
-INSERT INTO to-do(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに');
-INSERT INTO to-do(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り');
+INSERT INTO `to-do`(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに');
+INSERT INTO `to-do`(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに');
+INSERT INTO `to-do`(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り');
 
 
