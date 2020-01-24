@@ -31,26 +31,27 @@ case class CategoryTable[P <: JdbcProfile]()(implicit val driver: P)
   
   class Table(tag: Tag) extends BasicTable(tag, "category") {
     // Columns
-    /* @1 */ def id        = column[Category.Id]   ("id",         O.UInt64, O.PrimaryKey, O.AutoInc)
-    /* @2 */ def name      = column[String]        ("name",       O.Utf8Char255)
-    /* @3 */ def slug      = column[String]        ("slug",       O.Utf8Char255)
-    /* @4 */ def updatedAt = column[LocalDateTime] ("update_at",  O.TsCurrent)
-    /* @5 */ def createdAt = column[LocalDateTime] ("created_at", O.Ts)
+    /* @1 */ def id            = column[Category.Id]            ("id",             O.UInt64, O.PrimaryKey, O.AutoInc)
+    /* @2 */ def name          = column[String]                 ("name",           O.Utf8Char255)
+    /* @3 */ def slug          = column[String]                 ("slug",           O.Utf8Char255)
+    /* @4 */ def categoryColor = column[Category.CategoryColor] ("category_color", O.UInt8)
+    /* @4 */ def updatedAt     = column[LocalDateTime]          ("update_at",      O.TsCurrent)
+    /* @5 */ def createdAt     = column[LocalDateTime]          ("created_at",     O.Ts)
 
     // All columns as a tuple
     type TableElementTuple = (
-      Option[Category.Id], String, String, LocalDateTime, LocalDateTime
+      Option[Category.Id], String, String, Category.CategoryColor, LocalDateTime, LocalDateTime
     )
   
     // The * projection of the table
-    def * = (id.?, name, slug, updatedAt, createdAt) <> (
+    def * = (id.?, name, slug, categoryColor, updatedAt, createdAt) <> (
       /** The bidirectional mappings : Tuple(table) => Model */
       (t: TableElementTuple) => Category(
-        t._1, t._2, t._3, t._4, t._5
+        t._1, t._2, t._3, t._4, t._5, t._6
       ),
       /** The bidirectional mappings : Model => Tuple(table) */
       (v: TableElementType) => Category.unapply(v).map { t => (
-        t._1, t._2, t._3, LocalDateTime.now(), t._5
+        t._1, t._2, t._3, t._4, LocalDateTime.now(), t._6
       )}
     )
   }

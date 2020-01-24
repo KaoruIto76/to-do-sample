@@ -27,6 +27,13 @@ case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
     }
   }
 
+  def filterBySlug(slug: String): Future[Option[EntityEmbeddedId]] = {
+    RunDBAction(CategoryTable, "slave") { _
+      .filter(_.slug === slug)
+      .result.headOption
+    }
+  }
+
   def add(data:EntityWithNoId):Future[Id] = {
     RunDBAction(CategoryTable) { slick =>
       slick returning slick.map(_.id) += data.v
@@ -43,8 +50,17 @@ case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
     }
   }
 
-  @deprecated("use update method", "2.0")  
-  def update(data: EntityEmbeddedId): Future[Option[EntityEmbeddedId]] = 
-     Future.failed(new UnsupportedOperationException)
+  def update(data: EntityEmbeddedId): Future[Option[EntityEmbeddedId]] = {
+    RunDBAction(CategoryTable, "slave") { slick =>
+      val row = slick.filter(_.id === data.id)
+      for {
+        old <- row.result.headOption
+        _   <- old match {
+          case None    => DBIO.successful(0)
+          case Some(_) => row.update(data.v)
+        }
+      } yield old
+    }
+  }
 }
 

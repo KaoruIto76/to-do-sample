@@ -10,10 +10,14 @@ scalaVersion := "2.12.8"
 libraryDependencies += guice
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
 
+resolvers ++= Seq(
+  "IxiaS Releases" at "http://maven.ixias.net.s3-ap-northeast-1.amazonaws.com/releases"
+)
+
 libraryDependencies ++= Seq(
-  "net.ixias" %% "ixias"      % "1.1.11",
-  "net.ixias" %% "ixias-aws"  % "1.1.11",
-  "net.ixias" %% "ixias-play" % "1.1.11",
+  "net.ixias" %% "ixias"      % "1.1.17",
+  "net.ixias" %% "ixias-aws"  % "1.1.17",
+  "net.ixias" %% "ixias-play" % "1.1.17",
   "mysql"          % "mysql-connector-java" % "5.1.+",
   "ch.qos.logback" % "logback-classic"      % "1.1.+",
 )
