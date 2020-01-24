@@ -1,0 +1,26 @@
+@*
+ *
+ * to do sample project
+ *
+ *@
+
+@(vv: model.todo.ViewValueTodoDetail)
+
+@linkToTop = @{ controllers.routes.HomeController.index().url }
+
+@Main(vv) {
+  <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
+  <div class="todo-detaili">
+    <span class="todo-category-name" style="background-color: @vv.category.v.categoryColor.color">
+      @vv.category.v.name
+    </span>
+    <div class="todo-content"> 
+      <a href="@controllers.routes.TodoController.detail(vv.task.id)" class="todo-title">
+        @vv.task.v.title
+      </a>
+      <p>@vv.task.v.body</p>
+    </div>
+    </ul>
+  </div>
+}
+

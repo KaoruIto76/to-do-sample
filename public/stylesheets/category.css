@@ -1,0 +1,22 @@
+
+
+.category-list {
+  position:      relative;
+  width:         90%;
+  margin:        50px 0px;
+  padding:       30px 15px;
+  border-radius: 7px;
+  box-shadow:    4px 4px 4px 4px rgba(0,0,0,0.06);
+}
+
+.category-list .link-to-category-detail {
+  position:   absolute;
+  right:      50px;
+}
+
+.category-list .category-color {
+  width:          15px;
+  height:         15px;
+  display:        inline-block;
+  vertical-align: text-bottom;
+}
