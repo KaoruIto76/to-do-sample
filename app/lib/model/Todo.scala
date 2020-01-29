@@ -38,4 +38,11 @@ object Todo {
       )
     )
   }
+
+  // mapping to form data
+  case class FormValue(
+    cid:    Long,
+    title:  String,
+    body:   String
+  )
 }

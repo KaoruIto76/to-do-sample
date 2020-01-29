@@ -8,7 +8,7 @@
 
 @linkToTop = @{ controllers.routes.HomeController.index().url }
 
-@Main(vv) {
+@Common(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
 
   @for(item <- vv.categories) {

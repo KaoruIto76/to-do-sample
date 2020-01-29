@@ -4,9 +4,7 @@
  *
  */
 
-DROP TABLE IF EXISTS `category`;
-
-CREATE TABLE `category` (
+CREATE TABLE `to_do_category` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `slug` VARCHAR(255) NOT NULL,
@@ -16,12 +14,12 @@ CREATE TABLE `category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO category(name,slug,category_color) values('フロントエンド','front',1);
-INSERT INTO category(name,slug,category_color) values('バックエンド','back',2);
-INSERT INTO category(name,slug,category_color) values('インフラ','infra',3);
+INSERT INTO to_do_category(name,slug,category_color) values('フロントエンド','front',1);
+INSERT INTO to_do_category(name,slug,category_color) values('バックエンド','back',2);
+INSERT INTO to_do_category(name,slug,category_color) values('インフラ','infra',3);
 
 
-CREATE TABLE `to-do` (
+CREATE TABLE `to_do` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` bigint(20) unsigned NOT NULL,
   `title` VARCHAR(255) NOT NULL,
@@ -31,8 +29,8 @@ CREATE TABLE `to-do` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `to-do`(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに');
-INSERT INTO `to-do`(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに');
-INSERT INTO `to-do`(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り');
+INSERT INTO `to_do`(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに');
+INSERT INTO `to_do`(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに');
+INSERT INTO `to_do`(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り');
 
 

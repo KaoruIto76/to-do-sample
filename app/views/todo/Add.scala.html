@@ -1,0 +1,27 @@
+@*
+ *
+ * to do sample project
+ *
+ *@
+@import lib.model.Todo.FormValue
+
+@(vv: model.todo.ViewValueTodoAdd, todoForm : Form[FormValue])(implicit request: RequestHeader, messagesProvider: MessagesProvider)
+@import helper._
+
+@linkToTop = @{ controllers.routes.HomeController.index().url }
+
+@Common(vv) {
+  <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
+  @helper.form( action = helper.CSRF(routes.TodoController.add) ){
+    <fieldset class="form">
+      @helper.select(
+        field   = todoForm("categoryId"),
+        options = vv.allCategory.map(ca => options((ca.id.toString,ca.v.name))).flatten,
+        '_label -> "カテゴリ",
+      )
+      @helper.inputText(todoForm("title"), '_label -> "タイトル")
+      @helper.textarea(todoForm("body"),   '_label -> "内容")
+    </fieldset>
+    <input type="submit" value="追加">
+  }
+}

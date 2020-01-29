@@ -29,7 +29,7 @@ case class CategoryTable[P <: JdbcProfile]()(implicit val driver: P)
 
   // --[ declare all column ] ----------------------------------------------
   
-  class Table(tag: Tag) extends BasicTable(tag, "category") {
+  class Table(tag: Tag) extends BasicTable(tag, "to_do_category") {
     // Columns
     /* @1 */ def id            = column[Category.Id]            ("id",             O.UInt64, O.PrimaryKey, O.AutoInc)
     /* @2 */ def name          = column[String]                 ("name",           O.Utf8Char255)

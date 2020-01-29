@@ -30,7 +30,7 @@ case class TodoTable[P <: JdbcProfile]()(implicit val driver: P)
 
   // --[ declare all column ] ----------------------------------------------
   
-  class Table(tag: Tag) extends BasicTable(tag, "to-do") {
+  class Table(tag: Tag) extends BasicTable(tag, "to_do") {
     // Columns
     /* @1 */ def id        = column[Todo.Id]       ("id",          O.UInt64, O.PrimaryKey, O.AutoInc)
     /* @2 */ def cid       = column[Category.Id]   ("category_id", O.UInt64)

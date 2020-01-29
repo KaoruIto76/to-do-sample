@@ -18,26 +18,42 @@ import lib.model.Todo
 import model.category._
 import model.todo._
 
+import play.api.data._
+import play.api.data.Forms._
+import play.api.data.validation.Valid
+import play.api.data.validation.Constraint
+import play.api.data.validation.Invalid
+import play.api.i18n.I18nSupport
+
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
  */
 @Singleton
-class TodoController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class TodoController @Inject()(val controllerComponents: ControllerComponents) extends BaseController with I18nSupport {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
-  
+
+
+  // form value
+  val formData = Form(mapping(
+      "categoryId" -> longNumber,
+      "title"      -> text.verifying("タイトルを入力してください", {!_.isEmpty()}),
+      "body"       -> text.verifying("内容を入力してください", {!_.isEmpty()}),
+    )(Todo.FormValue.apply)(Todo.FormValue.unapply)
+  )
+
   /**
    * show all todo
    */
-  def show() = Action.async { implicit req =>
+  def showAllTodo() = Action.async { implicit req =>
     for {
       allTask     <- TodoRepository.getAll
       allCategory <- CategoryRepository.getAll
     } yield {
 
-      val categoryMap = allCategory.map(x => (x.id -> x)).toMap
-      val tasks       = allTask.map(x => (x,categoryMap(x.v.cid)))
+      val categoryMap = allCategory.map(ca => (ca.id -> ca)).toMap
+      val tasks       = allTask.map(ta => (ta,categoryMap(ta.v.cid)))
 
       // factory view value
       val vv = ViewValueTodo(
@@ -45,35 +61,52 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
         tasks  = tasks,
         cssSrc = Seq("main.css","todo.css"),
         jsSrc  = Seq("main.js")
-      )      
-      Ok(views.html.todo.Todo(vv))
+      )
+      Ok(views.html.todo.Main(vv))
     }
   }
 
   /**
-   * show todo detail
+   * show add form
    */
-  def detail(id: Long) = Action.async { implicit req =>
-    val test = for {
-      task <- TodoRepository.get(Todo.Id(id))
-    } yield task
-    Future.successful(Ok("aaa"))
+  def showAddForm() = Action.async { implicit req =>
+    for {
+      allCategory <- CategoryRepository.getAll
+    } yield {
+      // factory view value
+      val vv = ViewValueTodoAdd(
+        title       = "Todo新規作成",
+        allCategory = allCategory,
+        cssSrc      = Seq("main.css","todo.css"),
+        jsSrc       = Seq("main.js")
+      )
+      Ok(views.html.todo.Add(vv,formData))
+    }
   }
-//            category match {
-//              case None     => NotFound
-//              case Some(ca) => {
-//                // factory view value
-//                val vv = ViewValueTodoDetail(
-//                  title    = "Todo一覧",
-//                  task     = x,
-//                  category = ca,
-//                  cssSrc   = Seq("main.css","todo.css"),
-//                  jsSrc    = Seq("main.js")
-//                )
-//                Ok(s"$vv")
-//              }
-//            }
-//          }
-//        }
+
+  def add() = Action.async { implicit req =>
+    formData.bindFromRequest.fold(
+      errors => Future.successful(BadRequest("failed")),
+      data   => {
+        val entity = Todo(data.title,data.body,Category.Id(data.cid))
+        for {
+          _ <- TodoRepository.add(entity)
+        } yield Ok("aaaaaaaaaaa")
+      }
+    )
+  }
+
+  /**
+   * show edit form
+   */
+  def edit(id: Long) = Action.async { implicit req =>
+    for {
+      task     <- TodoRepository.get(Todo.Id(id))
+      category <- task match {
+        case Some(ta) => CategoryRepository.get(ta.v.cid)
+        case None     => Future.successful(None)
+      }
+    } yield Ok(s"$category")
+  }
 }
 
