@@ -57,7 +57,7 @@ case class TodoRepository[P <: JdbcProfile]()(implicit val driver: P)
   }
 
   def update(data: EntityEmbeddedId): Future[Option[EntityEmbeddedId]] = {
-    RunDBAction(TodoTable, "slave") { slick =>
+    RunDBAction(TodoTable) { slick =>
       val row = slick.filter(_.id === data.id)
       for {
         old <- row.result.headOption
