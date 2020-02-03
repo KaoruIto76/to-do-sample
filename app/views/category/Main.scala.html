@@ -1,0 +1,38 @@
+@*
+ *
+ * to do sample project
+ *
+ *@
+
+@import helper._
+ 
+@(vv: model.category.ViewValueCategory)(implicit request: RequestHeader)
+
+@linkToTop         = @{ controllers.routes.HomeController.index().url }
+@linkToAddCategory = @{ controllers.routes.CategoryController.showAddForm().url }
+
+@Default(vv) {
+  <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
+  <a class="link-to-add-category" href="@linkToAddCategory">カテゴリ新規作成</a>
+
+  @for(item <- vv.categories) {
+    @categoryList(item)
+  }
+}
+
+@categoryList(category: lib.model.Category.EmbeddedId) = {
+  <div class="category-list">
+    <a class="link-to-category-detail" href="@controllers.routes.CategoryController.showEditForm(category.id)">
+      編集
+    </a>
+    @helper.form(helper.CSRF(routes.CategoryController.delete(category.id)) ){
+      <input class="category-list__delete-button" type="submit" value="削除">
+    }
+    <ul>
+      <li>カテゴリID:     @category.id</li>
+      <li>カテゴリ名:     @category.v.name</li>
+      <li>URL用識別子:    @category.v.slug</li>
+      <li>カテゴリ識別色: <div class="category-color" style="background-color: @{category.v.categoryColor.color}"></div></li>
+    </ul>
+  </div>
+}

@@ -57,7 +57,7 @@ case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
   }
 
   def update(data: EntityEmbeddedId): Future[Option[EntityEmbeddedId]] = {
-    RunDBAction(CategoryTable, "slave") { slick =>
+    RunDBAction(CategoryTable) { slick =>
       val row = slick.filter(_.id === data.id)
       for {
         old <- row.result.headOption

@@ -4,7 +4,9 @@
  *
  *@
 
-@(vv: model.todo.ViewValueTodo)
+@import helper._
+ 
+@(vv: model.todo.ViewValueTodo)(implicit request: RequestHeader)
 
 @linkToTop     = @{ controllers.routes.HomeController.index().url }
 @linkToAddTodo = @{ controllers.routes.TodoController.add().url }
@@ -20,6 +22,9 @@
 
 @todoList(todo: lib.model.Todo.EmbeddedId, category: lib.model.Category.EmbeddedId) = {
   <div class="todo-list">
+    @helper.form(helper.CSRF(routes.TodoController.delete(todo.id)) ){
+      <input class="todo-list__delete-button" type="submit" value="削除">
+    }
     <a class="todo-list__to-detail" href="@controllers.routes.TodoController.showEditForm(todo.id)">
       編集
     </a>

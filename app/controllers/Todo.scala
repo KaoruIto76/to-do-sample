@@ -147,15 +147,15 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
       data   => {
         for {
           todo   <- TodoRepository.get(Todo.Id(id))
-          a      <- todo match {
+          _      <- todo match {
             case None    => Future.successful(BadRequest("failed"))
             case Some(v) => {
-              val entity =  todo.map(_.map(_.copy(
+              val entity =  v.map(_.copy(
                 title = data.title,
                 body  = data.body,
                 cid   = Category.Id(data.cid)
-              )))
-              TodoRepository.update(v)
+              ))
+              TodoRepository.update(entity)
             }
           }
         } yield {
@@ -176,34 +176,17 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
    * delete Todo
    */
   def delete(id: Long) = Action.async { implicit req =>
-    // まだ未実装(すぐ終わる)
-    formData.bindFromRequest.fold(
-      errors => Future.successful(BadRequest("failed")),
-      data   => {
-        for {
-          todo   <- TodoRepository.get(Todo.Id(id))
-          a      <- todo match {
-            case None    => Future.successful(BadRequest("failed"))
-            case Some(v) => {
-              val entity =  todo.map(_.map(_.copy(
-                title = data.title,
-                body  = data.body,
-                cid   = Category.Id(data.cid)
-              )))
-              TodoRepository.update(v)
-            }
-          }
-        } yield {
-          // factory view value
-          val vv = ViewValueMessage(
-            title       = "Todo編集",
-            message     = "Todoを編集しました",
-            cssSrc      = Seq("main.css"),
-            jsSrc       = Seq("main.js")
-          )
-          Ok(views.html.common.Success(vv))
-        }
-      }
-    )
+    for {
+      todo   <- TodoRepository.remove(Todo.Id(id))
+    } yield {
+      // factory view value
+      val vv = ViewValueMessage(
+        title       = "Todo削除",
+        message     = "Todoを削除しました",
+        cssSrc      = Seq("main.css"),
+        jsSrc       = Seq("main.js")
+      )
+      Ok(views.html.common.Success(vv))
+    }
   }
 }

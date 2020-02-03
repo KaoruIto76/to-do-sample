@@ -18,6 +18,12 @@
   bottom:        20px;
 }
 
+.todo-list .todo-list__delete-button {
+  position:      absolute;
+  right:         100px;
+  bottom:        20px;
+}
+
 .todo-list .todo-list__category-name {
   position:      absolute;
   right:         30px;

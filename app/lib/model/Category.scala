@@ -51,5 +51,16 @@ object Category {
     case object COLOR_RED    extends CategoryColor(code = 5, color = "#ff0000")
     case object COLOR_GRAY   extends CategoryColor(code = 6, color = "#696969")
     case object COLOR_WHITE  extends CategoryColor(code = 7, color = "#ffffff")
+
+    def allColors: Seq[Category.CategoryColor] = {
+      (1 to 7).map(x => CategoryColor(x.toShort))
+    }
   }
+
+  // mapping to form data
+  case class FormValue(
+    name:          String,
+    slug:          String,
+    categoryColor: Int
+  )
 }

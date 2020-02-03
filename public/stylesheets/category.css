@@ -2,7 +2,7 @@
 
 .category-list {
   position:      relative;
-  width:         90%;
+  width:         950px;
   margin:        50px 0px;
   padding:       30px 15px;
   border-radius: 7px;
@@ -10,8 +10,15 @@
 }
 
 .category-list .link-to-category-detail {
-  position:   absolute;
-  right:      50px;
+  position:      absolute;
+  right:         50px;
+  bottom:        20px;
+}
+
+.category-list .category-list__delete-button {
+  position:      absolute;
+  right:         100px;
+  bottom:        20px;
 }
 
 .category-list .category-color {
@@ -19,4 +26,16 @@
   height:         15px;
   display:        inline-block;
   vertical-align: text-bottom;
+}
+
+.link-to-add-category {
+  float:         right;
+}
+
+/**
+ * add to-do
+ */
+
+.form {
+  margin:         30px 0;
 }
