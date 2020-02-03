@@ -4,17 +4,17 @@
  *
  *@
 @import lib.model.Todo.FormValue
+@import helper._
 
-@(vv: model.todo.ViewValueTodoForm, todoForm : Form[FormValue])(
+@(vv: model.todo.ViewValueTodoForm, todoForm : Form[FormValue], tid: Long)(
   implicit request: RequestHeader, messagesProvider: MessagesProvider
 )
-@import helper._
 
 @linkToTop = @{ controllers.routes.HomeController.index().url }
 
 @Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
-  @helper.form( action = helper.CSRF(routes.TodoController.add) ){
+  @helper.form( action = helper.CSRF(routes.TodoController.edit(tid)) ){
     <fieldset class="form">
       @helper.select(
         field   =  todoForm("categoryId"),
@@ -24,6 +24,6 @@
       @helper.inputText(todoForm("title"), '_label -> "タイトル")
       @helper.textarea(todoForm("body"),   '_label -> "内容")
     </fieldset>
-    <input type="submit" value="追加">
+    <input type="submit" value="保存">
   }
 }

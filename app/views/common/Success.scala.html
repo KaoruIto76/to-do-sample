@@ -1,0 +1,14 @@
+@*
+ *
+ * to do sample project
+ *
+ *@
+
+@(vv: model.ViewValueMessage)
+
+@linkToTop = @{ controllers.routes.HomeController.index().url }
+
+@Default(vv) {
+  <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
+  <h1 class="success-message">@vv.message</h1>
+}
