@@ -7,7 +7,7 @@
  @(vv: model.ViewValueHome)
 
  @linkToCategory = @{ controllers.routes.CategoryController.show().url }
- @linkToTodo     = @{ controllers.routes.TodoController.show().url }
+ @linkToTodo     = @{ controllers.routes.TodoController.showAllTodo().url }
 
  @Common(vv) {
    <ul>
