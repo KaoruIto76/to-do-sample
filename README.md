@@ -34,7 +34,7 @@ mysql> Show DATABASES;                  // データベース一覧
 
 #### mysqlにサンプルデータを挿入
 
-```:mysql
+```
 /**** テーブルが空なことを確認 ****/
 mysql> SHOW TABLES;
 +------------------------+
@@ -128,5 +128,5 @@ mysql> SELECT * FROM to_do;
 ### playframeworkを起動
 
 ```
-
+$ sbt run   // サーバーが起動したらlocalhost:9000にアクセス
 ```
