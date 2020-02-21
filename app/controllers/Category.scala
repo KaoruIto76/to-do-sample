@@ -36,9 +36,9 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
 
   // form value
   val formData = Form(mapping(
-    "name"           -> text.verifying("カテゴリ名を入力してください", {!_.isEmpty()}),
-    "slug"           -> text.verifying("slugを入力してください", {!_.isEmpty()}),
-    "categoryColor"  -> number,
+    "name"  -> text.verifying("カテゴリ名を入力してください", {!_.isEmpty()}),
+    "slug"  -> text.verifying("slugを入力してください", {!_.isEmpty()}),
+    "color" -> number,
     )(Category.FormValue.apply)(Category.FormValue.unapply)
   )
   
@@ -75,12 +75,12 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
           val defaultData = formData.fill(Category.FormValue(
             ca.v.name,
             ca.v.slug,
-            ca.v.categoryColor.code.toInt
+            ca.v.color.code.toInt
           ))
           // factory view value
           val vv = ViewValueCategoryForm(
             title    = "カテゴリ編集",
-            colors   = Category.CategoryColor.allColors,
+            colors   = Category.Color.allColors,
             cssSrc   = Seq("main.css","category.css"),
             jsSrc    = Seq("main.js")
           )   
@@ -97,7 +97,7 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
     // factory view value
     val vv = ViewValueCategoryForm(
       title    = "カテゴリ新規作成",
-      colors   = Category.CategoryColor.allColors,
+      colors   = Category.Color.allColors,
       cssSrc   = Seq("main.css","category.css"),
       jsSrc    = Seq("main.js")
     )
@@ -117,9 +117,9 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
             case None     => Future.successful(BadRequest)
             case Some(ca) => {
               val entity =  ca.map(_.copy(
-                name          = data.name,
-                slug          = data.slug,
-                categoryColor = Category.CategoryColor(data.categoryColor.toShort)
+                name  = data.name,
+                slug  = data.slug,
+                color = Category.Color(data.color.toShort)
               ))
               CategoryRepository.update(entity)
             }
@@ -145,7 +145,7 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
-        val entity = Category(data.name,data.slug,Category.CategoryColor(data.categoryColor.toShort))
+        val entity = Category(data.name,data.slug,Category.Color(data.color.toShort))
         for {
           _ <- CategoryRepository.add(entity)
         } yield {

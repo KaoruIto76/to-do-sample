@@ -5,8 +5,10 @@
  */
 package model
 
+// 共通のviewValue
 trait ViewValueCommon {
-  val title:  String
-  val cssSrc: Seq[String]
-  val jsSrc:  Seq[String]
+  val title:  String      // pageのタイトル
+  val cssSrc: Seq[String] // pageで読み込むcssのファイル名
+  val jsSrc:  Seq[String] // pageで読み込むjavascriptのファイル名
 }
+

@@ -9,6 +9,7 @@ import lib.model.Category
 import lib.model.Todo
 import model.ViewValueCommon
 
+// category詳細ページのviewvalue
 case class ViewValueCategoryDetail(
   title:      String,
   category:   Category.EmbeddedId,

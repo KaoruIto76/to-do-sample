@@ -17,39 +17,38 @@ case class CategoryTable[P <: JdbcProfile]()(implicit val driver: P)
   
   import api._
 
-  // --[ declare table ] ----------------------------------------------
+  // --[ テーブル定義 ] ----------------------------------------------
   lazy val dsn = Map(
     "master" -> DataSourceName("ixias.db.mysql://master/to_do_sample"),
     "slave"  -> DataSourceName("ixias.db.mysql://slave/to_do_sample")
   )
 
-  // --[ declare query ] ----------------------------------------------
+  // --[ クエリー定義 ] ----------------------------------------------
   class Query extends BasicQuery(new Table(_)) {}
   lazy val query = new Query
 
-  // --[ declare all column ] ----------------------------------------------
-  
+  // --[ テーブルのカラム定義 ] ----------------------------------------
   class Table(tag: Tag) extends BasicTable(tag, "to_do_category") {
     // Columns
-    /* @1 */ def id            = column[Category.Id]            ("id",             O.UInt64, O.PrimaryKey, O.AutoInc)
-    /* @2 */ def name          = column[String]                 ("name",           O.Utf8Char255)
-    /* @3 */ def slug          = column[String]                 ("slug",           O.Utf8Char255)
-    /* @4 */ def categoryColor = column[Category.CategoryColor] ("category_color", O.UInt8)
-    /* @5 */ def updatedAt     = column[LocalDateTime]          ("updated_at",     O.TsCurrent)
-    /* @6 */ def createdAt     = column[LocalDateTime]          ("created_at",     O.Ts)
+    /* @1 */ def id        = column[Category.Id]    ("id",             O.UInt64, O.PrimaryKey, O.AutoInc)
+    /* @2 */ def name      = column[String]         ("name",           O.Utf8Char255)
+    /* @3 */ def slug      = column[String]         ("slug",           O.Utf8Char255)
+    /* @4 */ def color     = column[Category.Color] ("category_color", O.UInt8)
+    /* @5 */ def updatedAt = column[LocalDateTime]  ("updated_at",     O.TsCurrent)
+    /* @6 */ def createdAt = column[LocalDateTime]  ("created_at",     O.Ts)
 
-    // All columns as a tuple
+    // カラムをtupleで表現
     type TableElementTuple = (
-      Option[Category.Id], String, String, Category.CategoryColor, LocalDateTime, LocalDateTime
+      Option[Category.Id], String, String, Category.Color, LocalDateTime, LocalDateTime
     )
   
-    // The * projection of the table
-    def * = (id.?, name, slug, categoryColor, updatedAt, createdAt) <> (
-      /** The bidirectional mappings : Tuple(table) => Model */
+    // DB <=> Scala の相互のmapping定義
+    def * = (id.?, name, slug, color, updatedAt, createdAt) <> (
+      // Tuple(table) => Model
       (t: TableElementTuple) => Category(
         t._1, t._2, t._3, t._4, t._5, t._6
       ),
-      /** The bidirectional mappings : Model => Tuple(table) */
+      // Model => Tuple(table)
       (v: TableElementType) => Category.unapply(v).map { t => (
         t._1, t._2, t._3, t._4, LocalDateTime.now(), t._6
       )}

@@ -8,6 +8,7 @@ package model.category
 import lib.model.Category
 import model.ViewValueCommon
 
+// category一覧ページのviewvalue
 case class ViewValueCategory(
   title:      String,
   categories: Seq[Category.EmbeddedId],

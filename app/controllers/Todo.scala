@@ -54,7 +54,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
     } yield {
 
       val categoryMap = allCategory.map(ca => (ca.id -> ca)).toMap
-      val tasks       = allTask.map(ta => (ta,categoryMap(ta.v.cid)))
+      val tasks       = allTask.map(ta     => (ta,categoryMap(ta.v.cid)))
 
       // factory view value
       val vv = ViewValueTodo(
@@ -97,20 +97,24 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
         case None     => Future.successful(None)
       }
     } yield {
-      val tid         = task.map(_.id).getOrElse(Todo.Id(0))
-      val defaultData = formData.fill(Todo.FormValue(
-        category.map(_.id).getOrElse(0),
-        task.map(_.v.title).getOrElse(""),
-        task.map(_.v.body).getOrElse("")
-      ))
-      // factory view value
-      val vv = ViewValueTodoForm(
-        title       = "Todo編集",
-        allCategory = allCategory,
-        cssSrc      = Seq("main.css","todo.css"),
-        jsSrc       = Seq("main.js")
-      )
-      Ok(views.html.todo.Edit(vv,defaultData,tid))
+      task match {
+        case None    => BadRequest
+        case Some(t) => {
+          val defaultData = formData.fill(Todo.FormValue(
+            t.id,
+            t.v.title,
+            t.v.body
+          ))
+          // factory view value
+          val vv = ViewValueTodoForm(
+            title       = "Todo編集",
+            allCategory = allCategory,
+            cssSrc      = Seq("main.css","todo.css"),
+            jsSrc       = Seq("main.js")
+          )
+          Ok(views.html.todo.Edit(vv,defaultData,t.id))
+        }
+      }
     }
   }
 
@@ -150,7 +154,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
           _      <- todo match {
             case None    => Future.successful(BadRequest("failed"))
             case Some(v) => {
-              val entity =  v.map(_.copy(
+              val entity = v.map(_.copy(
                 title = data.title,
                 body  = data.body,
                 cid   = Category.Id(data.cid)

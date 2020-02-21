@@ -18,39 +18,38 @@ case class TodoTable[P <: JdbcProfile]()(implicit val driver: P)
   
   import api._
 
-  // --[ declare table ] ----------------------------------------------
+  // --[ テーブル定義 ] ----------------------------------------------
   lazy val dsn = Map(
     "master" -> DataSourceName("ixias.db.mysql://master/to_do_sample"),
     "slave"  -> DataSourceName("ixias.db.mysql://slave/to_do_sample")
   )
 
-  // --[ declare query ] ----------------------------------------------
+  // --[ クエリー定義 ] ----------------------------------------------
   class Query extends BasicQuery(new Table(_)) {}
   lazy val query = new Query
 
-  // --[ declare all column ] ----------------------------------------------
-  
+  // --[ テーブルのカラム定義 ] --------------------------------------
   class Table(tag: Tag) extends BasicTable(tag, "to_do") {
     // Columns
     /* @1 */ def id        = column[Todo.Id]       ("id",          O.UInt64, O.PrimaryKey, O.AutoInc)
     /* @2 */ def cid       = column[Category.Id]   ("category_id", O.UInt64)
     /* @3 */ def title     = column[String]        ("title",       O.Utf8Char255)
-    /* @3 */ def body      = column[String]        ("body",        O.Utf8Char255)
-    /* @4 */ def updatedAt = column[LocalDateTime] ("updated_at",  O.TsCurrent)
-    /* @5 */ def createdAt = column[LocalDateTime] ("created_at",  O.Ts)
+    /* @4 */ def body      = column[String]        ("body",        O.Utf8Char255)
+    /* @5 */ def updatedAt = column[LocalDateTime] ("updated_at",  O.TsCurrent)
+    /* @6 */ def createdAt = column[LocalDateTime] ("created_at",  O.Ts)
 
-    // All columns as a tuple
+    // カラムをtupleで表現
     type TableElementTuple = (
       Option[Todo.Id], Category.Id, String, String, LocalDateTime, LocalDateTime
     )
   
-    // The * projection of the table
+    // DB <=> Scala の相互のmapping定義
     def * = (id.?, cid, title, body, updatedAt, createdAt) <> (
-      /** The bidirectional mappings : Tuple(table) => Model */
+      // Tuple(table) => Model
       (t: TableElementTuple) => Todo(
         t._1, t._2, t._3, t._4, t._5, t._6
       ),
-      /** The bidirectional mappings : Model => Tuple(table) */
+      // Model => Tuple(table)
       (v: TableElementType) => Todo.unapply(v).map { t => (
         t._1, t._2, t._3, t._4, LocalDateTime.now(), t._5
       )}

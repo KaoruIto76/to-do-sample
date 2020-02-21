@@ -9,6 +9,7 @@ import lib.model.Todo
 import lib.model.Category
 import model.ViewValueCommon
 
+// Todo詳細ページのviewvlaue
 case class ViewValueTodoDetail(
   title:    String,
   task:     Todo.EmbeddedId,

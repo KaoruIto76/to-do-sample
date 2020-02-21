@@ -10,7 +10,8 @@ import ixias.model._
 import java.time.LocalDateTime
 
 import Todo._
-// model of todo
+
+// to_do_categoryデータmapping用model
 case class Todo(
   id:         Option[Id],
   cid:        Category.Id,
@@ -20,7 +21,7 @@ case class Todo(
   createdAt:  LocalDateTime = NOW
 ) extends EntityModel[Id]
 
-// companion object
+// コンパニオンオブジェクト
 object Todo {
   val  Id  = the[Identity[Id]]
   type Id  = Long @@ Todo
@@ -28,6 +29,7 @@ object Todo {
   type WithNoId   = Entity.WithNoId   [Id, Todo]
   type EmbeddedId = Entity.EmbeddedId [Id, Todo]
 
+  // INSERT時のIDがAutoincrementのため,IDなしであることを示すオブジェクトに変換
   def apply(title: String, body:  String, cid: Category.Id): WithNoId = {
     Entity.WithNoId (
       new Todo(
@@ -39,7 +41,7 @@ object Todo {
     )
   }
 
-  // mapping to form data
+  // フォームのデータをbindするためのmodel
   case class FormValue(
     cid:    Long,
     title:  String,
