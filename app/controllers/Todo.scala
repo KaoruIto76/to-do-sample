@@ -31,7 +31,8 @@ import play.api.i18n.I18nSupport
  * application's home page.
  */
 @Singleton
-class TodoController @Inject()(val controllerComponents: ControllerComponents) extends BaseController with I18nSupport {
+class TodoController @Inject()(val controllerComponents: ControllerComponents)
+  extends BaseController with I18nSupport {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
 
@@ -125,7 +126,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
-        val entity = Todo(data.title,data.body,Category.Id(data.cid))
+        val entity = Todo(data.title,data.body,Category.Id(data.cid),Todo.Status.IS_ACTIVE)
         for {
           _ <- TodoRepository.add(entity)
         } yield {

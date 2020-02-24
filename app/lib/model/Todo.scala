@@ -7,6 +7,7 @@
 package lib.model
 
 import ixias.model._
+import ixias.util.EnumStatus
 import java.time.LocalDateTime
 
 import Todo._
@@ -17,6 +18,7 @@ case class Todo(
   cid:        Category.Id,
   title:      String,
   body:       String,
+  status:     Status,
   updatedAt:  LocalDateTime = NOW,
   createdAt:  LocalDateTime = NOW
 ) extends EntityModel[Id]
@@ -30,15 +32,23 @@ object Todo {
   type EmbeddedId = Entity.EmbeddedId [Id, Todo]
 
   // INSERT時のIDがAutoincrementのため,IDなしであることを示すオブジェクトに変換
-  def apply(title: String, body:  String, cid: Category.Id): WithNoId = {
+  def apply(title: String, body:  String, cid: Category.Id, status: Status): WithNoId = {
     Entity.WithNoId (
       new Todo(
         None,
         cid,
         title,
-        body
+        body,
+        status
       )
     )
+  }
+
+  // ステータス
+  sealed abstract class Status(val code: Short, val value: String) extends EnumStatus
+  object Status extends EnumStatus.Of[Status] {
+    case object IS_INACTIVE extends Status(code = 0,   value = "無効")
+    case object IS_ACTIVE   extends Status(code = 100, value = "有効")
   }
 
   // フォームのデータをbindするためのmodel
