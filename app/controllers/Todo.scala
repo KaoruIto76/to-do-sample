@@ -31,7 +31,8 @@ import play.api.i18n.I18nSupport
  * application's home page.
  */
 @Singleton
-class TodoController @Inject()(val controllerComponents: ControllerComponents) extends BaseController with I18nSupport {
+class TodoController @Inject()(val controllerComponents: ControllerComponents)
+  extends BaseController with I18nSupport {
 
   implicit val ec = scala.concurrent.ExecutionContext.global
 
@@ -41,6 +42,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
       "categoryId" -> longNumber,
       "title"      -> text.verifying("タイトルを入力してください", {!_.isEmpty()}),
       "body"       -> text.verifying("内容を入力してください", {!_.isEmpty()}),
+      "status"     -> optional(number)
     )(Todo.FormValue.apply)(Todo.FormValue.unapply)
   )
 
@@ -103,7 +105,8 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
           val defaultData = formData.fill(Todo.FormValue(
             t.id,
             t.v.title,
-            t.v.body
+            t.v.body,
+            Some(t.v.status.code.toInt)
           ))
           // factory view value
           val vv = ViewValueTodoForm(
@@ -136,6 +139,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
             cssSrc      = Seq("main.css"),
             jsSrc       = Seq("main.js")
           )
+          println(Todo.Status.values)
           Ok(views.html.common.Success(vv))
         }
       }
@@ -155,9 +159,10 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents) e
             case None    => Future.successful(BadRequest("failed"))
             case Some(v) => {
               val entity = v.map(_.copy(
-                title = data.title,
-                body  = data.body,
-                cid   = Category.Id(data.cid)
+                cid    = Category.Id(data.cid),
+                title  = data.title,
+                body   = data.body,
+                status = Todo.Status(data.status.get.toShort)
               ))
               TodoRepository.update(entity)
             }

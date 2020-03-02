@@ -7,6 +7,7 @@
 package lib.model
 
 import ixias.model._
+import ixias.util.EnumStatus
 import java.time.LocalDateTime
 
 import Todo._
@@ -17,6 +18,7 @@ case class Todo(
   cid:        Category.Id,
   title:      String,
   body:       String,
+  status:     Status        = Status.IS_TODO,
   updatedAt:  LocalDateTime = NOW,
   createdAt:  LocalDateTime = NOW
 ) extends EntityModel[Id]
@@ -41,10 +43,20 @@ object Todo {
     )
   }
 
+  // ステータス
+  sealed abstract class Status(val code: Short, val value: String) extends EnumStatus
+  object Status extends EnumStatus.Of[Status] {
+    case object IS_TODO             extends Status(code = 0, value = "TODO")
+    case object IS_PROGRES          extends Status(code = 1, value = "実装中")
+    case object IS_IN_REVIRE        extends Status(code = 2, value = "レビュー")
+    case object IS_WAIT_FOR_RELEASE extends Status(code = 3, value = "リリース待ち")
+  }
+
   // フォームのデータをbindするためのmodel
   case class FormValue(
     cid:    Long,
     title:  String,
-    body:   String
+    body:   String,
+    status: Option[Int]
   )
 }
