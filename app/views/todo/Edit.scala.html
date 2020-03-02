@@ -4,6 +4,7 @@
  *
  *@
 @import lib.model.Todo.FormValue
+@import lib.model.Todo.Status
 @import helper._
 
 @(vv: model.todo.ViewValueTodoForm, todoForm : Form[FormValue], tid: Long)(
@@ -23,6 +24,11 @@
       )
       @helper.inputText(todoForm("title"), '_label -> "タイトル")
       @helper.textarea(todoForm("body"),   '_label -> "内容")
+      @helper.select(
+        field   =  todoForm("status"),
+        options = Status.values.map(x => options((x.code.toString,x.value))).flatten,
+        '_label -> "カテゴリ",
+      )
     </fieldset>
     <input type="submit" value="保存">
   }

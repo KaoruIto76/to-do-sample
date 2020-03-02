@@ -18,7 +18,7 @@ case class Todo(
   cid:        Category.Id,
   title:      String,
   body:       String,
-  status:     Status,
+  status:     Status        = Status.IS_TODO,
   updatedAt:  LocalDateTime = NOW,
   createdAt:  LocalDateTime = NOW
 ) extends EntityModel[Id]
@@ -32,14 +32,13 @@ object Todo {
   type EmbeddedId = Entity.EmbeddedId [Id, Todo]
 
   // INSERT時のIDがAutoincrementのため,IDなしであることを示すオブジェクトに変換
-  def apply(title: String, body:  String, cid: Category.Id, status: Status): WithNoId = {
+  def apply(title: String, body:  String, cid: Category.Id): WithNoId = {
     Entity.WithNoId (
       new Todo(
         None,
         cid,
         title,
-        body,
-        status
+        body
       )
     )
   }
@@ -47,14 +46,17 @@ object Todo {
   // ステータス
   sealed abstract class Status(val code: Short, val value: String) extends EnumStatus
   object Status extends EnumStatus.Of[Status] {
-    case object IS_INACTIVE extends Status(code = 0,   value = "無効")
-    case object IS_ACTIVE   extends Status(code = 100, value = "有効")
+    case object IS_TODO             extends Status(code = 0, value = "TODO")
+    case object IS_PROGRES          extends Status(code = 1, value = "実装中")
+    case object IS_IN_REVIRE        extends Status(code = 2, value = "レビュー")
+    case object IS_WAIT_FOR_RELEASE extends Status(code = 3, value = "リリース待ち")
   }
 
   // フォームのデータをbindするためのmodel
   case class FormValue(
     cid:    Long,
     title:  String,
-    body:   String
+    body:   String,
+    status: Option[Int]
   )
 }

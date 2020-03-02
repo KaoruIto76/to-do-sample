@@ -42,6 +42,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
       "categoryId" -> longNumber,
       "title"      -> text.verifying("タイトルを入力してください", {!_.isEmpty()}),
       "body"       -> text.verifying("内容を入力してください", {!_.isEmpty()}),
+      "status"     -> optional(number)
     )(Todo.FormValue.apply)(Todo.FormValue.unapply)
   )
 
@@ -104,7 +105,8 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
           val defaultData = formData.fill(Todo.FormValue(
             t.id,
             t.v.title,
-            t.v.body
+            t.v.body,
+            Some(t.v.status.code.toInt)
           ))
           // factory view value
           val vv = ViewValueTodoForm(
@@ -126,7 +128,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
-        val entity = Todo(data.title,data.body,Category.Id(data.cid),Todo.Status.IS_ACTIVE)
+        val entity = Todo(data.title,data.body,Category.Id(data.cid))
         for {
           _ <- TodoRepository.add(entity)
         } yield {
@@ -137,6 +139,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
             cssSrc      = Seq("main.css"),
             jsSrc       = Seq("main.js")
           )
+          println(Todo.Status.values)
           Ok(views.html.common.Success(vv))
         }
       }
@@ -156,9 +159,10 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
             case None    => Future.successful(BadRequest("failed"))
             case Some(v) => {
               val entity = v.map(_.copy(
-                title = data.title,
-                body  = data.body,
-                cid   = Category.Id(data.cid)
+                cid    = Category.Id(data.cid),
+                title  = data.title,
+                body   = data.body,
+                status = Todo.Status(data.status.get.toShort)
               ))
               TodoRepository.update(entity)
             }
