@@ -5,7 +5,7 @@
  */
 package model
 
-// submit後のメッセージページのviewvalue
+// edit,add,delete, 後のメッセージページのviewvalue
 case class ViewValueMessage(
   title:   String,
   message: String,

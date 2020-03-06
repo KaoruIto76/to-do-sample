@@ -57,7 +57,7 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
         cssSrc     = Seq("main.css","category.css"),
         jsSrc      = Seq("main.js")
       )      
-      Ok(views.html.category.Main(vv))
+      Ok(views.html.category.List(vv))
     }
   }
 
@@ -66,7 +66,6 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
    */
   def showEditForm(id: Long) = Action.async { implicit req =>
     for {
-      // Some(category)  <- CategoryRepository.get(Category.Id(id)) <- Bad
       category  <- CategoryRepository.get(Category.Id(id))
     } yield {
       category match {

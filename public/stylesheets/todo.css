@@ -1,8 +1,9 @@
-
-
 /**
  * to-do list
  */
+
+/*********** TODO新規作成ページ ************/
+
 .todo-list {
   position:      relative;
   width:         950px;
@@ -52,10 +53,8 @@
   float:         right;
 }
 
-/**
- * add to-do
- */
-
+/*********** form ************/
 .form {
-  margin:         30px 0;
+  margin:        30px 0;
+  border:        none;
 }

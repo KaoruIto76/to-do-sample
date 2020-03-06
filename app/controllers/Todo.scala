@@ -37,7 +37,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   implicit val ec = scala.concurrent.ExecutionContext.global
 
 
-  // form value
+  // フォームの値をバインド
   val formData = Form(mapping(
       "categoryId" -> longNumber,
       "title"      -> text.verifying("タイトルを入力してください", {!_.isEmpty()}),
@@ -47,7 +47,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   )
 
   /**
-   * show all todo
+   * TODO 一覧
    */
   def showAllTodo() = Action.async { implicit req =>
     for {
@@ -58,19 +58,19 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
       val categoryMap = allCategory.map(ca => (ca.id -> ca)).toMap
       val tasks       = allTask.map(ta     => (ta,categoryMap(ta.v.cid)))
 
-      // factory view value
+      // viewvalue 生成
       val vv = ViewValueTodo(
         title  = "Todo一覧",
         tasks  = tasks,
         cssSrc = Seq("main.css","todo.css"),
         jsSrc  = Seq("main.js")
       )
-      Ok(views.html.todo.Main(vv))
+      Ok(views.html.todo.List(vv))
     }
   }
 
   /**
-   * show add form
+   * TODO 新規作成ページ
    */
   def showAddForm() = Action.async { implicit req =>
     for {
@@ -88,7 +88,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   }
 
   /**
-   * show edit form
+   * TODO 編集ページ
    */
   def showEditForm(id: Long) = Action.async { implicit req =>
     for {
@@ -108,7 +108,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
             t.v.body,
             Some(t.v.status.code.toInt)
           ))
-          // factory view value
+          // viewvalue 生成
           val vv = ViewValueTodoForm(
             title       = "Todo編集",
             allCategory = allCategory,
@@ -122,7 +122,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   }
 
   /**
-   * add new Todo
+   * TODO をINSERT
    */
   def add() = Action.async { implicit req =>
     formData.bindFromRequest.fold(
@@ -132,7 +132,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
         for {
           _ <- TodoRepository.add(entity)
         } yield {
-          // factory view value
+          // viewvalue 生成
           val vv = ViewValueMessage(
             title       = "Todo新規作成",
             message     = "Todoを新規追加いたしました",
@@ -147,7 +147,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   }
 
   /**
-   * eit Todo
+   * TODO をUPDATE
    */
   def edit(id: Long) = Action.async { implicit req =>
     formData.bindFromRequest.fold(
@@ -168,7 +168,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
             }
           }
         } yield {
-          // factory view value
+          // viewvalue 生成
           val vv = ViewValueMessage(
             title       = "Todo編集",
             message     = "Todoを編集しました",
@@ -182,7 +182,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   }
 
   /**
-   * delete Todo
+   * TODO を削除
    */
   def delete(id: Long) = Action.async { implicit req =>
     for {

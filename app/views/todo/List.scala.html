@@ -11,7 +11,7 @@
 @linkToTop     = @{ controllers.routes.HomeController.index().url }
 @linkToAddTodo = @{ controllers.routes.TodoController.add().url }
 
-@Default(vv) {
+@common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   <a class="link-to-add-todo" href="@linkToAddTodo">Todo新規作成</a>
 

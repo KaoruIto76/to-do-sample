@@ -12,7 +12,7 @@
 
 @linkToTop = @{ controllers.routes.HomeController.index().url }
 
-@Default(vv) {
+@common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   @helper.form( action = helper.CSRF(routes.CategoryController.edit(cid)) ){
     <fieldset class="form">

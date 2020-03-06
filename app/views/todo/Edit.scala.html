@@ -13,20 +13,20 @@
 
 @linkToTop = @{ controllers.routes.HomeController.index().url }
 
-@Default(vv) {
+@common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   @helper.form( action = helper.CSRF(routes.TodoController.edit(tid)) ){
     <fieldset class="form">
       @helper.select(
         field   =  todoForm("categoryId"),
-        options =  vv.allCategory.map(ca => options((ca.id.toString,ca.v.name))).flatten,
+        options =  vv.allCategory.map(ca => (ca.id.toString,ca.v.name)),
         '_label -> "カテゴリ",
       )
       @helper.inputText(todoForm("title"), '_label -> "タイトル")
       @helper.textarea(todoForm("body"),   '_label -> "内容")
       @helper.select(
         field   =  todoForm("status"),
-        options = Status.values.map(x => options((x.code.toString,x.value))).flatten,
+        options = Status.values.map(x => (x.code.toString,x.value)),
         '_label -> "カテゴリ",
       )
     </fieldset>

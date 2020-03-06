@@ -8,10 +8,10 @@
  
 @(vv: model.category.ViewValueCategory)(implicit request: RequestHeader)
 
-@linkToTop         = @{ controllers.routes.HomeController.index().url }
+@linkToTop         = @{ controllers.routes.HomeController.index().url           }
 @linkToAddCategory = @{ controllers.routes.CategoryController.showAddForm().url }
 
-@Default(vv) {
+@common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   <a class="link-to-add-category" href="@linkToAddCategory">カテゴリ新規作成</a>
 

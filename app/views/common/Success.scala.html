@@ -8,7 +8,7 @@
 
 @linkToTop = @{ controllers.routes.HomeController.index().url }
 
-@Default(vv) {
+@common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   <h1 class="success-message">@vv.message</h1>
 }
