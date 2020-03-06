@@ -24,13 +24,14 @@ CREATE TABLE `to_do` (
   `category_id` bigint(20) unsigned NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `body` VARCHAR(255) NOT NULL,
+  `status` TINYINT NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `to_do`(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに');
-INSERT INTO `to_do`(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに');
-INSERT INTO `to_do`(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り');
+INSERT INTO `to_do`(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに',0);
+INSERT INTO `to_do`(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに',1);
+INSERT INTO `to_do`(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り',2);
 
 
