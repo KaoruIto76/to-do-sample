@@ -88,6 +88,7 @@ mysql> CREATE TABLE `to_do` (
          `category_id` bigint(20) unsigned NOT NULL,
          `title` VARCHAR(255) NOT NULL,
          `body` VARCHAR(255) NOT NULL,
+         `status` TINYINT NOT NULL,
          `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
          `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
          PRIMARY KEY (`id`)
@@ -107,9 +108,9 @@ mysql> SHOW TABLES;
 
 /**** 'to_do'テーブルのサンプルデータ挿入 ****/
 
-mysql> INSERT INTO `to_do`(category_id,title,body) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに');
-mysql> INSERT INTO `to_do`(category_id,title,body) values(2, 'Controllerの修正','Controller名をもっといい感じに');
-mysql> INSERT INTO `to_do`(category_id,title,body) values(3, '新しいDB環境の作成','タイトル通り');
+mysql> INSERT INTO `to_do`(category_id,title,body,status) values(1, 'デザインをいい感じにする','ヘッダーのデザインをもっといい感じに',0);
+mysql> INSERT INTO `to_do`(category_id,title,body,status) values(2, 'Controllerの修正','Controller名をもっといい感じに',0);
+mysql> INSERT INTO `to_do`(category_id,title,body,status) values(3, '新しいDB環境の作成','タイトル通り',0);
 
 /*** データが入っているか確認 ****/
 
