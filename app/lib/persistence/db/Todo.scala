@@ -14,7 +14,7 @@ import lib.model.Todo
 import lib.model.Category
 
 case class TodoTable[P <: JdbcProfile]()(implicit val driver: P)
-  extends Table[Todo, P] with SlickColumnTypes[P] {
+  extends Table[Todo, P] {
   
   import api._
 

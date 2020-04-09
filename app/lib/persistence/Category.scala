@@ -15,7 +15,6 @@ import lib.model.Category
 
 case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
   extends SlickRepository[Category.Id, Category, P]
-  with db.SlickColumnTypes[P]
   with db.SlickResourceProvider[P]
 {
   import api._

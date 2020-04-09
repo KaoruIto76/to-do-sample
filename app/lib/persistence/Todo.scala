@@ -15,7 +15,6 @@ import lib.model.Category
 
 case class TodoRepository[P <: JdbcProfile]()(implicit val driver: P)
     extends SlickRepository[Todo.Id, Todo, P]
-    with db.SlickColumnTypes[P]
     with db.SlickResourceProvider[P]
 {
   import api._

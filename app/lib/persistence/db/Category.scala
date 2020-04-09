@@ -13,7 +13,7 @@ import ixias.persistence.model.Table
 import lib.model.Category
 
 case class CategoryTable[P <: JdbcProfile]()(implicit val driver: P)
-  extends Table[Category, P] with SlickColumnTypes[P] {
+  extends Table[Category, P] {
   
   import api._
 
