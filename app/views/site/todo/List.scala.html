@@ -6,10 +6,10 @@
 
 @import helper._
  
-@(vv: model.todo.ViewValueTodo)(implicit request: RequestHeader)
+@(vv: model.site.todo.ViewValueTodo)(implicit request: RequestHeader)
 
 @linkToTop     = @{ controllers.routes.HomeController.index().url }
-@linkToAddTodo = @{ controllers.routes.TodoController.add().url }
+@linkToAddTodo = @{ controllers.routes.TodoController.showAddForm().url }
 
 @common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>

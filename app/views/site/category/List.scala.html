@@ -6,7 +6,7 @@
 
 @import helper._
  
-@(vv: model.category.ViewValueCategory)(implicit request: RequestHeader)
+@(vv: model.site.category.ViewValueCategory)(implicit request: RequestHeader)
 
 @linkToTop         = @{ controllers.routes.HomeController.index().url           }
 @linkToAddCategory = @{ controllers.routes.CategoryController.showAddForm().url }
@@ -26,13 +26,15 @@
       編集
     </a>
     @helper.form(helper.CSRF(routes.CategoryController.delete(category.id)) ){
-      <input class="category-list__delete-button" type="submit" value="削除">
+      <input id="category-delete-button" class="category-list__delete-button" type="submit" value="削除">
     }
     <ul>
       <li>カテゴリID:     @category.id</li>
       <li>カテゴリ名:     @category.v.name</li>
       <li>URL用識別子:    @category.v.slug</li>
-      <li>カテゴリ識別色: <div class="category-color" style="background-color: @{category.v.color.color}"></div></li>
+      <li>カテゴリ識別色:
+        <div class="category-color" style="background-color: @{category.v.color.color}"></div>
+      </li>
     </ul>
   </div>
 }

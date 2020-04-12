@@ -7,13 +7,14 @@
 GET     /                             controllers.HomeController.index
 GET     /category                     controllers.CategoryController.showAllCategory
 GET     /category/$id<[0-9]+>         controllers.CategoryController.showEditForm(id: Long)
-GET     /category/add                 controllers.CategoryController.showAddForm
+
+GET     /category/add/form            controllers.CategoryController.showAddForm
 POST    /category/add                 controllers.CategoryController.add()
 POST    /category/$id<[0-9]+>/edit    controllers.CategoryController.edit(id: Long)
 POST    /category/$id<[0-9]+>/delete  controllers.CategoryController.delete(id: Long)
 
 GET     /todo                     controllers.TodoController.showAllTodo
-GET     /todo/add                 controllers.TodoController.showAddForm
+GET     /todo/add/form            controllers.TodoController.showAddForm
 POST    /todo/add                 controllers.TodoController.add
 GET     /todo/$id<[0-9]+>         controllers.TodoController.showEditForm(id: Long)
 POST    /todo/$id<[0-9]+>/edit    controllers.TodoController.edit(id: Long)

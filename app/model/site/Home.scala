@@ -4,7 +4,9 @@
  *
  */
 
-package model
+package model.site
+
+import model.common.ViewValueCommon
 
 // Topページのviewvalue
 case class ViewValueHome(

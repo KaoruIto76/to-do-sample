@@ -3,7 +3,9 @@
  * to do sample project
  *
  */
-package model
+package model.common
+
+import model.common.ViewValueCommon
 
 // edit,add,delete, 後のメッセージページのviewvalue
 case class ViewValueMessage(

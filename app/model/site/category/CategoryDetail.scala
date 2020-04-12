@@ -3,11 +3,11 @@
  * to do sample project
  *
  */
-package model.category
+package model.site.category
 
 import lib.model.Category
 import lib.model.Todo
-import model.ViewValueCommon
+import model.common.ViewValueCommon
 
 // category詳細ページのviewvalue
 case class ViewValueCategoryDetail(

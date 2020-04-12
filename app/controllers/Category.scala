@@ -11,12 +11,14 @@ import scala.concurrent.Future
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import play.filters.csrf.CSRFCheck
+import play.filters.csrf.CSRFAddToken
 
 import lib.persistence.default._
 import lib.model.Category
 
-import model.ViewValueMessage
-import model.category._
+import model.common.ViewValueMessage
+import model.site.category._
 
 import play.api.data._
 import play.api.data.Forms._
@@ -29,10 +31,17 @@ import play.api.i18n.I18nSupport
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
  */
-@Singleton
-class CategoryController @Inject()(val controllerComponents: ControllerComponents) extends BaseController with I18nSupport {
+class CategoryController @Inject()(
+  val controllerComponents: ControllerComponents,
+  val checkToken:           CSRFCheck
+) extends BaseController with I18nSupport {
 
-  implicit val ec = scala.concurrent.ExecutionContext.global
+  implicit val ec = defaultExecutionContext
+
+  object CSRFErrorHandler extends play.filters.csrf.CSRF.ErrorHandler {
+    def handle(req: RequestHeader, msg: String) =
+      Future.successful(Redirect(routes.TodoController.showAllTodo()))
+  }
 
   // form value
   val formData = Form(mapping(
@@ -57,7 +66,7 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
         cssSrc     = Seq("main.css","category.css"),
         jsSrc      = Seq("main.js")
       )      
-      Ok(views.html.category.List(vv))
+      Ok(views.html.site.category.List(vv))
     }
   }
 
@@ -82,8 +91,8 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
             colors   = Category.Color.allColors,
             cssSrc   = Seq("main.css","category.css"),
             jsSrc    = Seq("main.js")
-          )   
-          Ok(views.html.category.Edit(vv,defaultData,ca.id))
+          )
+          Ok(views.html.site.category.Edit(vv,defaultData,ca.id))
         }
       }
     }
@@ -100,13 +109,13 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
       cssSrc   = Seq("main.css","category.css"),
       jsSrc    = Seq("main.js")
     )
-    Ok(views.html.category.Add(vv,formData))
+    Ok(views.html.site.category.Add(vv,formData))
   }
 
   /**
    * show category detail
    */
-  def edit(id: Long) = Action.async { implicit req =>
+  def edit(id: Long) = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
@@ -135,12 +144,12 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
         }
       }
     )
-  }
+  }, CSRFErrorHandler)
 
   /**
    * show category detail
    */
-  def add() = Action.async { implicit req =>
+  def add() = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
@@ -159,23 +168,24 @@ class CategoryController @Inject()(val controllerComponents: ControllerComponent
         }
       }
     )
-  }
+  },CSRFErrorHandler)
 
   /**
    * delete category
    */
-  def delete(id: Long) = Action.async { implicit req =>
+  def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {
-      todo   <- CategoryRepository.remove(Category.Id(id))
+      _  <- CategoryRepository.remove(Category.Id(id))
+      _  <- TodoRepository.removeAll
     } yield {
       // factory view value
       val vv = ViewValueMessage(
         title       = "カテゴリ削除",
-        message     = "カテゴリを削除しました",
+        message     = "カテゴリとそれに紐づくTODOを削除しました",
         cssSrc      = Seq("main.css"),
         jsSrc       = Seq("main.js")
       )
       Ok(views.html.common.Success(vv))
     }
-  }
+  }, CSRFErrorHandler)
 }

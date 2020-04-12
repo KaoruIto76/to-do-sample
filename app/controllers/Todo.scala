@@ -9,15 +9,16 @@ package controllers
 import javax.inject._
 import play.api._
 import play.api.mvc._
+import play.filters.csrf.CSRFCheck
+import play.filters.csrf.CSRFAddToken
 
 import scala.concurrent.Future
 import lib.persistence.default._
 import lib.model.Category
 import lib.model.Todo
 
-import model.ViewValueMessage
-import model.category._
-import model.todo._
+import model.common.ViewValueMessage
+import model.site.todo._
 
 import play.api.data._
 import play.api.data.Forms._
@@ -30,11 +31,17 @@ import play.api.i18n.I18nSupport
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page.
  */
-@Singleton
-class TodoController @Inject()(val controllerComponents: ControllerComponents)
-  extends BaseController with I18nSupport {
+class TodoController @Inject()(
+  val controllerComponents: ControllerComponents,
+  val checkToken:           CSRFCheck
+) extends BaseController with I18nSupport {
 
-  implicit val ec = scala.concurrent.ExecutionContext.global
+  implicit val ec = defaultExecutionContext
+
+  object CSRFErrorHandler extends play.filters.csrf.CSRF.ErrorHandler {
+    def handle(req: RequestHeader, msg: String) =
+      Future.successful(Redirect(routes.TodoController.showAllTodo()))
+  }
 
 
   // フォームの値をバインド
@@ -65,7 +72,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
         cssSrc = Seq("main.css","todo.css"),
         jsSrc  = Seq("main.js")
       )
-      Ok(views.html.todo.List(vv))
+      Ok(views.html.site.todo.List(vv))
     }
   }
 
@@ -83,7 +90,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
         cssSrc      = Seq("main.css","todo.css"),
         jsSrc       = Seq("main.js")
       )
-      Ok(views.html.todo.Add(vv,formData))
+      Ok(views.html.site.todo.Add(vv,formData))
     }
   }
 
@@ -115,7 +122,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
             cssSrc      = Seq("main.css","todo.css"),
             jsSrc       = Seq("main.js")
           )
-          Ok(views.html.todo.Edit(vv,defaultData,t.id))
+          Ok(views.html.site.todo.Edit(vv,defaultData,t.id))
         }
       }
     }
@@ -124,7 +131,7 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
   /**
    * TODO をINSERT
    */
-  def add() = Action.async { implicit req =>
+  def add() = checkToken( Action.async { implicit req =>
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
@@ -144,12 +151,12 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
         }
       }
     )
-  }
+  }, CSRFErrorHandler)
 
   /**
    * TODO をUPDATE
    */
-  def edit(id: Long) = Action.async { implicit req =>
+  def edit(id: Long) = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
@@ -179,12 +186,12 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
         }
       }
     )
-  }
+  }, CSRFErrorHandler)
 
   /**
    * TODO を削除
    */
-  def delete(id: Long) = Action.async { implicit req =>
+  def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {
       todo   <- TodoRepository.remove(Todo.Id(id))
     } yield {
@@ -197,5 +204,5 @@ class TodoController @Inject()(val controllerComponents: ControllerComponents)
       )
       Ok(views.html.common.Success(vv))
     }
-  }
+  }, CSRFErrorHandler)
 }

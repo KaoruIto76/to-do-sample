@@ -3,11 +3,11 @@
  * to do sample project
  *
  */
-package model.todo
+package model.site.todo
 
 import lib.model.Todo
 import lib.model.Category
-import model.ViewValueCommon
+import model.common.ViewValueCommon
 
 // Todo一覧ページのviewvalue
 case class ViewValueTodo(
