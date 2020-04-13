@@ -22,18 +22,21 @@
 
 @categoryList(category: model.common.component.ViewValueCategory) = {
   <div class="category-list">
-    <a class="link-to-category-detail" href="@controllers.routes.CategoryController.showEditForm(category.id)">
+    <a class="category-list__show-todo-button" href="@controllers.routes.TodoController.showTodoBySlug(category.slug)">
+      @category.name のTODO一覧
+    </a>
+    <a class="category-list__link-to-category-detail" href="@controllers.routes.CategoryController.showEditForm(category.id)">
       編集
     </a>
     @helper.form(helper.CSRF(routes.CategoryController.delete(category.id)) ){
-      <input id="category-delete-button" class="category-list__delete-button" type="submit" value="削除">
+      <input id="category-list__delete-button" class="category-list__delete-button" type="submit" value="削除">
     }
     <ul>
       <li>カテゴリID:     @category.id</li>
       <li>カテゴリ名:     @category.name</li>
       <li>URL用識別子:    @category.slug</li>
       <li>カテゴリ識別色:
-        <div class="category-color" style="background-color: @{category.color.value}"></div>
+        <div class="category-list__color" style="background-color: @{category.color.value}"></div>
       </li>
     </ul>
   </div>

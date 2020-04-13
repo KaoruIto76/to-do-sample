@@ -32,7 +32,7 @@ case class CategoryRepository[P <: JdbcProfile]()(implicit val driver: P)
     }
   }
 
-  def filterBySlug(slug: String): Future[Option[EntityEmbeddedId]] = {
+  def findBySlug(slug: String): Future[Option[EntityEmbeddedId]] = {
     RunDBAction(CategoryTable, "slave") { _
       .filter(_.slug === slug)
       .result.headOption

@@ -35,11 +35,11 @@ class TodoController @Inject()(
 
   implicit val ec = defaultExecutionContext
 
+  // CSRFトークンをチェックするハンドラー
   object CSRFErrorHandler extends play.filters.csrf.CSRF.ErrorHandler {
     def handle(req: RequestHeader, msg: String) =
       Future.successful(Redirect(routes.TodoController.showAllTodo()))
   }
-
 
   // フォームの値をバインド
   val formData = Form(mapping(
@@ -59,15 +59,39 @@ class TodoController @Inject()(
       allCategory <- CategoryRepository.getAll
     } yield {
 
-      val categoryMap = allCategory.map(ca => (ca.id -> ca)).toMap
-      val todos       = allTodos.map(todo  => {
+      val categoryMap        = allCategory.map(ca => (ca.id -> ca)).toMap
+      val vvTodoWithCategory = allTodos.map(todo  => {
         (ViewValueTodo.create(todo),ViewValueCategory.create(categoryMap(todo.v.cid)))
       })
 
       // viewvalue 生成
       val vv = ViewValueTodoList(
         title  = "Todo一覧",
-        todos  = todos,
+        todos  = vvTodoWithCategory,
+        cssSrc = Seq("main.css","todo.css"),
+        jsSrc  = Seq("main.js")
+      )
+      Ok(views.html.site.todo.List(vv))
+    }
+  }
+
+  /**
+   * 指定されたカテゴリにひもづくTODO 一覧
+   */
+  def showTodoBySlug(slug: String) = Action.async { implicit req =>
+    for {
+      Some(category) <- CategoryRepository.findBySlug(slug)
+      todos          <- TodoRepository.filterByCategoryId(category.id)
+    } yield {
+
+      val vvTodoWithCategory = todos.map(todo => {
+        (ViewValueTodo.create(todo),ViewValueCategory.create(category))
+      })
+
+      // viewvalue 生成
+      val vv = ViewValueTodoList(
+        title  = category.v.name + "のTodo一覧",
+        todos  = vvTodoWithCategory,
         cssSrc = Seq("main.css","todo.css"),
         jsSrc  = Seq("main.js")
       )
@@ -108,7 +132,7 @@ class TodoController @Inject()(
       task match {
         case None    => NotFound("そのIdのTodoは存在しません")
         case Some(t) => {
-          val defaultData = formData.fill(Todo.FormValue(
+          val defaultFormvalue = formData.fill(Todo.FormValue(
             t.id,
             t.v.title,
             t.v.body,
@@ -121,7 +145,7 @@ class TodoController @Inject()(
             cssSrc      = Seq("main.css","todo.css"),
             jsSrc       = Seq("main.js")
           )
-          Ok(views.html.site.todo.Edit(vv,defaultData,t.id))
+          Ok(views.html.site.todo.Edit(vv,defaultFormvalue,t.id))
         }
       }
     }
@@ -163,13 +187,13 @@ class TodoController @Inject()(
           _      <- todo match {
             case None    => Future.successful(NotFound("そのIdのTodoは存在しません"))
             case Some(v) => {
-              val entity = v.map(_.copy(
+              val newEntity = v.map(_.copy(
                 cid    = Category.Id(data.cid),
                 title  = data.title,
                 body   = data.body,
                 status = Todo.Status(data.status.get.toShort)
               ))
-              TodoRepository.update(entity)
+              TodoRepository.update(newEntity)
             }
           }
         } yield {

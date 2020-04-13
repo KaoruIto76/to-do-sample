@@ -17,8 +17,12 @@
   <a class="link-to-add-todo" href="@linkToAddTodo">Todo新規作成</a>
 
   @** todo 一覧 **@
-  @for((todo,category) <- vv.todos) {
-    @todoList(todo,category)
+  @if(vv.todos.nonEmpty) {
+    @for((todo,category) <- vv.todos) {
+      @todoList(todo,category)
+    }
+  } else {
+    <h2>該当なし</h2>
   }
 }
 
