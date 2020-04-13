@@ -25,7 +25,7 @@
       @helper.inputText(todoForm("title"), '_label -> "タイトル")
       @helper.textarea(todoForm("body"),   '_label -> "内容")
       @helper.select(
-        field   =  todoForm("status"),
+        field   = todoForm("status"),
         options = Status.values.map(x => (x.code.toString,x.value)),
         '_label -> "カテゴリ",
       )

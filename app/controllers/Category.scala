@@ -38,12 +38,13 @@ class CategoryController @Inject()(
 
   implicit val ec = defaultExecutionContext
 
+  // CSRFトークンをチェックするハンドラー
   object CSRFErrorHandler extends play.filters.csrf.CSRF.ErrorHandler {
     def handle(req: RequestHeader, msg: String) =
       Future.successful(Redirect(routes.TodoController.showAllTodo()))
   }
 
-  // form value
+  // formの値をmapping
   val formData = Form(mapping(
     "name"  -> text.verifying("カテゴリ名を入力してください", {!_.isEmpty()}),
     "slug"  -> text.verifying("slugを入力してください", {!_.isEmpty()}),
@@ -52,14 +53,13 @@ class CategoryController @Inject()(
   )
   
   /**
-   * show all category
+   * カテゴリー一覧
    */
   def showAllCategory() = Action.async { implicit req =>
     for {
       categories <- CategoryRepository.getAll
     } yield {
 
-      // factory view value
       val vv = ViewValueCategory(
         title      = "カテゴリ一覧",
         categories = categories,
@@ -71,7 +71,7 @@ class CategoryController @Inject()(
   }
 
   /**
-   * show category detail
+   * カテゴリ編集フォーム
    */
   def showEditForm(id: Long) = Action.async { implicit req =>
     for {
@@ -99,10 +99,10 @@ class CategoryController @Inject()(
   }
 
   /**
-   * show category detail
+   * カテゴリ新規追加フォーム
    */
   def showAddForm() = Action { implicit req =>
-    // factory view value
+    
     val vv = ViewValueCategoryForm(
       title    = "カテゴリ新規作成",
       colors   = Category.Color.allColors,
@@ -113,7 +113,7 @@ class CategoryController @Inject()(
   }
 
   /**
-   * show category detail
+   * カテゴリデータ更新
    */
   def edit(id: Long) = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
@@ -133,7 +133,6 @@ class CategoryController @Inject()(
             }
           }
         } yield {
-          // factory view value
           val vv = ViewValueMessage(
             title    = "カテゴリ編集",
             message  = "カテゴリを編集しました",
@@ -147,7 +146,7 @@ class CategoryController @Inject()(
   }, CSRFErrorHandler)
 
   /**
-   * show category detail
+   * カテゴリ新規追加
    */
   def add() = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
@@ -157,7 +156,7 @@ class CategoryController @Inject()(
         for {
           _ <- CategoryRepository.add(entity)
         } yield {
-          // factory view value
+
           val vv = ViewValueMessage(
             title       = "カテゴリ新規作成",
             message     = "カテゴリを新規追加しました",
@@ -171,14 +170,14 @@ class CategoryController @Inject()(
   },CSRFErrorHandler)
 
   /**
-   * delete category
+   * カテゴリ削除
    */
   def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {
       _  <- CategoryRepository.remove(Category.Id(id))
       _  <- TodoRepository.removeAll
     } yield {
-      // factory view value
+      
       val vv = ViewValueMessage(
         title       = "カテゴリ削除",
         message     = "カテゴリとそれに紐づくTODOを削除しました",
