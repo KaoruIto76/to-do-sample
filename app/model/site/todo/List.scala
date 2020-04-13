@@ -8,11 +8,12 @@ package model.site.todo
 import lib.model.Todo
 import lib.model.Category
 import model.common.ViewValueCommon
+import model.common.component._
 
 // Todo一覧ページのviewvalue
-case class ViewValueTodo(
+case class ViewValueTodoList(
   title:  String,
-  tasks:  Seq[(Todo.EmbeddedId,Category.EmbeddedId)],
+  todos:  Seq[(ViewValueTodo,ViewValueCategory)],
   cssSrc: Seq[String],
   jsSrc:  Seq[String]
 ) extends ViewValueCommon

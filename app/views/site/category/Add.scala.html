@@ -20,7 +20,7 @@
       @helper.inputText(categoryForm("slug"), '_label -> "slug")
       @helper.select(
         field   =  categoryForm("color"),
-        options =  vv.colors.map(c => (c.code.toString,c.color)),
+        options =  vv.colors.map(c => (c.code.toString,c.value)),
         '_label -> "カテゴリカラー",
       )
     </fieldset>

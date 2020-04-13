@@ -19,7 +19,7 @@
     <fieldset class="form">
       @helper.select(
         field   =  todoForm("categoryId"),
-        options =  vv.allCategory.map(ca => (ca.id.toString,ca.v.name)),
+        options =  vv.allCategory.map(ca => (ca.id.toString,ca.name)),
         '_label -> "カテゴリ",
       )
       @helper.inputText(todoForm("title"), '_label -> "タイトル")

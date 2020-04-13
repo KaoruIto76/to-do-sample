@@ -4,6 +4,8 @@
  *
  */
 
+package model.common.component
+
 import lib.model.Todo
 import lib.model.Category
 
@@ -17,4 +19,12 @@ case class ViewValueCategory(
 
 object ViewValueCategory {
 
+  def create(entity: Category.EmbeddedId): ViewValueCategory = {
+    ViewValueCategory(
+      id    = entity.id,
+      name  = entity.v.name,
+      slug  = entity.v.slug,
+      color = entity.v.color
+    )
+  }
 }

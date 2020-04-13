@@ -43,15 +43,15 @@ object Category {
   }
 
   // カテゴリの識別カラーを列挙
-  sealed abstract class Color(val code: Short, val color: String) extends EnumStatus
+  sealed abstract class Color(val code: Short, val value: String) extends EnumStatus
   object Color extends EnumStatus.Of[Color] {
-    case object COLOR_BLUE   extends Color(code = 1, color = "#1e90ff")
-    case object COLOR_GREEN  extends Color(code = 2, color = "#98fb98")
-    case object COLOR_YELLOW extends Color(code = 3, color = "#ffff00")
-    case object COLOR_ORANGE extends Color(code = 4, color = "#ff8c00")
-    case object COLOR_RED    extends Color(code = 5, color = "#ff0000")
-    case object COLOR_GRAY   extends Color(code = 6, color = "#696969")
-    case object COLOR_WHITE  extends Color(code = 7, color = "grey")
+    case object COLOR_BLUE   extends Color(code = 1, value = "#1e90ff")
+    case object COLOR_GREEN  extends Color(code = 2, value = "#98fb98")
+    case object COLOR_YELLOW extends Color(code = 3, value = "#ffff00")
+    case object COLOR_ORANGE extends Color(code = 4, value = "#ff8c00")
+    case object COLOR_RED    extends Color(code = 5, value = "#ff0000")
+    case object COLOR_GRAY   extends Color(code = 6, value = "#696969")
+    case object COLOR_WHITE  extends Color(code = 7, value = "grey")
 
     // 全カテゴリカラーを取得
     def allColors:Seq[Category.Color] = this.values

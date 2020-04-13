@@ -33,11 +33,14 @@ case class TodoTable[P <: JdbcProfile]()(implicit val driver: P)
     // Columns
     /* @1 */ def id        = column[Todo.Id]       ("id",          O.UInt64, O.PrimaryKey, O.AutoInc)
     /* @2 */ def cid       = column[Category.Id]   ("category_id", O.UInt64)
-    /* @3 */ def title     = column[String]        ("title",       O.Utf8Char255)
+    /* @3 */ def title     = column[String]        ("title",       O.Text)
     /* @4 */ def body      = column[String]        ("body",        O.Utf8Char255)
     /* @5 */ def status    = column[Todo.Status]   ("status",      O.UInt8)
     /* @6 */ def updatedAt = column[LocalDateTime] ("updated_at",  O.TsCurrent)
     /* @7 */ def createdAt = column[LocalDateTime] ("created_at",  O.Ts)
+
+    // ユニークキー制約
+    def key01 = index("key01", cid)
 
     // カラムをtupleで表現
     type TableElementTuple = (

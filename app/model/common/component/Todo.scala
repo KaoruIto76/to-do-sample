@@ -4,6 +4,8 @@
  *
  */
 
+package model.common.component
+
 import lib.model.Todo
 import lib.model.Category
 
@@ -15,3 +17,16 @@ case class ViewValueTodo(
   body:       String,        // TODOの内容
   status:     Todo.Status,   // TODOのステータス
 )
+
+object ViewValueTodo {
+
+  def create(entity: Todo.EmbeddedId): ViewValueTodo = {
+    ViewValueTodo(
+      id     = entity.id,
+      cid    = entity.v.cid,
+      title  = entity.v.title,
+      body   = entity.v.body,
+      status = entity.v.status
+    )
+  }
+}

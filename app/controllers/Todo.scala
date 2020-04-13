@@ -7,19 +7,12 @@
 package controllers
 
 import javax.inject._
-import play.api._
-import play.api.mvc._
+import scala.concurrent.Future
+
 import play.filters.csrf.CSRFCheck
 import play.filters.csrf.CSRFAddToken
-
-import scala.concurrent.Future
-import lib.persistence.default._
-import lib.model.Category
-import lib.model.Todo
-
-import model.common.ViewValueMessage
-import model.site.todo._
-
+import play.api._
+import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Valid
@@ -27,10 +20,14 @@ import play.api.data.validation.Constraint
 import play.api.data.validation.Invalid
 import play.api.i18n.I18nSupport
 
-/**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
- */
+import lib.model.Category
+import lib.model.Todo
+import lib.persistence.default._
+
+import model.common.ViewValueMessage
+import model.common.component._
+import model.site.todo._
+
 class TodoController @Inject()(
   val controllerComponents: ControllerComponents,
   val checkToken:           CSRFCheck
@@ -58,17 +55,19 @@ class TodoController @Inject()(
    */
   def showAllTodo() = Action.async { implicit req =>
     for {
-      allTask     <- TodoRepository.getAll
+      allTodos    <- TodoRepository.getAll
       allCategory <- CategoryRepository.getAll
     } yield {
 
       val categoryMap = allCategory.map(ca => (ca.id -> ca)).toMap
-      val tasks       = allTask.map(ta     => (ta,categoryMap(ta.v.cid)))
+      val todos       = allTodos.map(todo  => {
+        (ViewValueTodo.create(todo),ViewValueCategory.create(categoryMap(todo.v.cid)))
+      })
 
       // viewvalue 生成
-      val vv = ViewValueTodo(
+      val vv = ViewValueTodoList(
         title  = "Todo一覧",
-        tasks  = tasks,
+        todos  = todos,
         cssSrc = Seq("main.css","todo.css"),
         jsSrc  = Seq("main.js")
       )
@@ -86,7 +85,7 @@ class TodoController @Inject()(
       // factory view value
       val vv = ViewValueTodoForm(
         title       = "Todo新規作成",
-        allCategory = allCategory,
+        allCategory = allCategory.map(ViewValueCategory.create(_)),
         cssSrc      = Seq("main.css","todo.css"),
         jsSrc       = Seq("main.js")
       )
@@ -107,7 +106,7 @@ class TodoController @Inject()(
       }
     } yield {
       task match {
-        case None    => BadRequest
+        case None    => NotFound("そのIdのTodoは存在しません")
         case Some(t) => {
           val defaultData = formData.fill(Todo.FormValue(
             t.id,
@@ -118,7 +117,7 @@ class TodoController @Inject()(
           // viewvalue 生成
           val vv = ViewValueTodoForm(
             title       = "Todo編集",
-            allCategory = allCategory,
+            allCategory = allCategory.map(ViewValueCategory.create(_)),
             cssSrc      = Seq("main.css","todo.css"),
             jsSrc       = Seq("main.js")
           )
@@ -146,7 +145,6 @@ class TodoController @Inject()(
             cssSrc      = Seq("main.css"),
             jsSrc       = Seq("main.js")
           )
-          println(Todo.Status.values)
           Ok(views.html.common.Success(vv))
         }
       }
@@ -163,7 +161,7 @@ class TodoController @Inject()(
         for {
           todo   <- TodoRepository.get(Todo.Id(id))
           _      <- todo match {
-            case None    => Future.successful(BadRequest("failed"))
+            case None    => Future.successful(NotFound("そのIdのTodoは存在しません"))
             case Some(v) => {
               val entity = v.map(_.copy(
                 cid    = Category.Id(data.cid),

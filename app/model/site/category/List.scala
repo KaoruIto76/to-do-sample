@@ -6,15 +6,13 @@
 package model.site.category
 
 import lib.model.Category
-import lib.model.Todo
 import model.common.ViewValueCommon
+import model.common.component.ViewValueCategory
 
-// category詳細ページのviewvalue
-case class ViewValueCategoryDetail(
+// category一覧ページのviewvalue
+case class ViewValueCategoryList(
   title:      String,
-  category:   Category.EmbeddedId,
-  tasks:      Seq[Todo.EmbeddedId],
+  categories: Seq[ViewValueCategory],
   cssSrc:     Seq[String],
   jsSrc:      Seq[String]
 ) extends ViewValueCommon
-

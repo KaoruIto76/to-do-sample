@@ -6,20 +6,13 @@
 
 package controllers
 
+import javax.inject._
 import scala.concurrent.Future
 
-import javax.inject._
-import play.api._
-import play.api.mvc._
 import play.filters.csrf.CSRFCheck
 import play.filters.csrf.CSRFAddToken
-
-import lib.persistence.default._
-import lib.model.Category
-
-import model.common.ViewValueMessage
-import model.site.category._
-
+import play.api._
+import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import play.api.data.validation.Valid
@@ -27,10 +20,13 @@ import play.api.data.validation.Constraint
 import play.api.data.validation.Invalid
 import play.api.i18n.I18nSupport
 
-/**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
- */
+import lib.model.Category
+import lib.persistence.default._
+
+import model.common.ViewValueMessage
+import model.common.component.ViewValueCategory
+import model.site.category._
+
 class CategoryController @Inject()(
   val controllerComponents: ControllerComponents,
   val checkToken:           CSRFCheck
@@ -60,9 +56,9 @@ class CategoryController @Inject()(
       categories <- CategoryRepository.getAll
     } yield {
 
-      val vv = ViewValueCategory(
+      val vv = ViewValueCategoryList(
         title      = "カテゴリ一覧",
-        categories = categories,
+        categories = categories.map(ViewValueCategory.create(_)),
         cssSrc     = Seq("main.css","category.css"),
         jsSrc      = Seq("main.js")
       )      
@@ -78,7 +74,7 @@ class CategoryController @Inject()(
       category  <- CategoryRepository.get(Category.Id(id))
     } yield {
       category match {
-        case None     => NotFound
+        case None     => NotFound("そのIDのカテゴリは存在しません")
         case Some(ca) => {
           val defaultData = formData.fill(Category.FormValue(
             ca.v.name,
@@ -113,7 +109,31 @@ class CategoryController @Inject()(
   }
 
   /**
-   * カテゴリデータ更新
+   * カテゴリINSERT
+   */
+  def add() = checkToken(Action.async { implicit req =>
+    formData.bindFromRequest.fold(
+      errors => Future.successful(BadRequest("failed")),
+      data   => {
+        val entity = Category(data.name,data.slug,Category.Color(data.color.toShort))
+        for {
+          _ <- CategoryRepository.add(entity)
+        } yield {
+
+          val vv = ViewValueMessage(
+            title       = "カテゴリ新規作成",
+            message     = "カテゴリを新規追加しました",
+            cssSrc      = Seq("main.css"),
+            jsSrc       = Seq("main.js")
+          )
+          Ok(views.html.common.Success(vv))
+        }
+      }
+    )
+  },CSRFErrorHandler)
+
+  /**
+   * カテゴリをUPDATE
    */
   def edit(id: Long) = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
@@ -146,31 +166,7 @@ class CategoryController @Inject()(
   }, CSRFErrorHandler)
 
   /**
-   * カテゴリ新規追加
-   */
-  def add() = checkToken(Action.async { implicit req =>
-    formData.bindFromRequest.fold(
-      errors => Future.successful(BadRequest("failed")),
-      data   => {
-        val entity = Category(data.name,data.slug,Category.Color(data.color.toShort))
-        for {
-          _ <- CategoryRepository.add(entity)
-        } yield {
-
-          val vv = ViewValueMessage(
-            title       = "カテゴリ新規作成",
-            message     = "カテゴリを新規追加しました",
-            cssSrc      = Seq("main.css"),
-            jsSrc       = Seq("main.js")
-          )
-          Ok(views.html.common.Success(vv))
-        }
-      }
-    )
-  },CSRFErrorHandler)
-
-  /**
-   * カテゴリ削除
+   * カテゴリをDELETE
    */
   def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {

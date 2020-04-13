@@ -5,8 +5,9 @@
  *@
 
 @import helper._
+@import model.common.component._
  
-@(vv: model.site.todo.ViewValueTodo)(implicit request: RequestHeader)
+@(vv: model.site.todo.ViewValueTodoList)(implicit request: RequestHeader)
 
 @linkToTop     = @{ controllers.routes.HomeController.index().url }
 @linkToAddTodo = @{ controllers.routes.TodoController.showAddForm().url }
@@ -15,12 +16,16 @@
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   <a class="link-to-add-todo" href="@linkToAddTodo">Todo新規作成</a>
 
-  @for((todo,category) <- vv.tasks) {
+  @** todo 一覧 **@
+  @for((todo,category) <- vv.todos) {
     @todoList(todo,category)
   }
 }
 
-@todoList(todo: lib.model.Todo.EmbeddedId, category: lib.model.Category.EmbeddedId) = {
+@**
+ * todoカード
+ *@
+@todoList(todo: ViewValueTodo, category: ViewValueCategory) = {
   <div class="todo-list">
     @helper.form(helper.CSRF(routes.TodoController.delete(todo.id)) ){
       <input class="todo-list__delete-button" type="submit" value="削除">
@@ -28,13 +33,13 @@
     <a class="todo-list__to-detail" href="@controllers.routes.TodoController.showEditForm(todo.id)">
       編集
     </a>
-    <span class="todo-list__category-name" style="background-color: @category.v.color.color">
-      @category.v.name
+    <span class="todo-list__category-name" style="background-color: @category.color.value">
+      @category.name
     </span>
     <div class="todo-list__content">
-      <span class="todo-list__content-status">@todo.v.status.value</span>
-      <h3 class="todo-list__content-title">[ @todo.v.title ]</h3>
-      <p>@todo.v.body</p>
+      <span class="todo-list__content-status">@todo.status.value</span>
+      <h3 class="todo-list__content-title">[ @todo.title ]</h3>
+      <p>@todo.body</p>
     </div>
     </ul>
   </div>
