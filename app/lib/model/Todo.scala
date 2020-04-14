@@ -31,18 +31,6 @@ object Todo {
   type WithNoId   = Entity.WithNoId   [Id, Todo]
   type EmbeddedId = Entity.EmbeddedId [Id, Todo]
 
-  // INSERT時のIDがAutoincrementのため,IDなしであることを示すインスタンスに変換
-  def apply(title: String, body:  String, cid: Category.Id): WithNoId = {
-    Entity.WithNoId (
-      new Todo(
-        None,
-        cid,
-        title,
-        body
-      )
-    )
-  }
-
   // ステータス
   sealed abstract class Status(val code: Short, val value: String) extends EnumStatus
   object Status extends EnumStatus.Of[Status] {

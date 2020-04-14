@@ -158,7 +158,7 @@ class TodoController @Inject()(
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
-        val entity = Todo(data.title,data.body,Category.Id(data.cid))
+        val entity = Todo(None,Category.Id(data.cid),data.title,data.body).toWithNoId
         for {
           _ <- TodoRepository.add(entity)
         } yield {

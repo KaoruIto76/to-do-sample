@@ -5,8 +5,6 @@
  */
 package model.common
 
-import model.common.ViewValueCommon
-
 // edit,add,delete, 後のメッセージページのviewvalue
 case class ViewValueMessage(
   title:   String,

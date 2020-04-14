@@ -115,7 +115,7 @@ class CategoryController @Inject()(
     formData.bindFromRequest.fold(
       errors => Future.successful(BadRequest("failed")),
       data   => {
-        val entity = Category(data.name,data.slug,Category.Color(data.color.toShort))
+        val entity = Category(None,data.name,data.slug,Category.Color(data.color.toShort)).toWithNoId
         for {
           _ <- CategoryRepository.add(entity)
         } yield {

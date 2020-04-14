@@ -30,18 +30,6 @@ object Category {
   type WithNoId   = Entity.WithNoId   [Id, Category]
   type EmbeddedId = Entity.EmbeddedId [Id, Category]
 
-  // INSERT時のIDがAutoincrementのため,IDなしであることを示すオブジェクトに変換
-  def apply(name: String, slug:  String, color: Color): WithNoId = {
-    Entity.WithNoId (
-      new Category(
-        None,
-        name,
-        slug,
-        color
-      )
-    )
-  }
-
   // カテゴリの識別カラーを列挙
   sealed abstract class Color(val code: Short, val value: String) extends EnumStatus
   object Color extends EnumStatus.Of[Color] {
