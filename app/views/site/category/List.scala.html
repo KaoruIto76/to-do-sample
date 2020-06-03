@@ -15,7 +15,7 @@
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
   <a class="link-to-add-category" href="@linkToAddCategory">カテゴリ新規作成</a>
 
-  @for(item <- vv.categories) {
+  @for(item <- vv.categorySeq) {
     @categoryList(item)
   }
 }

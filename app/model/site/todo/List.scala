@@ -12,8 +12,8 @@ import model.common.component._
 
 // Todo一覧ページのviewvalue
 case class ViewValueTodoList(
-  title:  String,
-  todos:  Seq[(ViewValueTodo,ViewValueCategory)],
-  cssSrc: Seq[String],
-  jsSrc:  Seq[String]
+  title:   String,
+  todoSeq: Seq[(ViewValueTodo,ViewValueCategory)],
+  cssSrc:  Seq[String],
+  jsSrc:   Seq[String]
 ) extends ViewValueCommon

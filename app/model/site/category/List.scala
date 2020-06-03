@@ -12,7 +12,7 @@ import model.common.component.ViewValueCategory
 // category一覧ページのviewvalue
 case class ViewValueCategoryList(
   title:      String,
-  categories: Seq[ViewValueCategory],
+  categorySeq: Seq[ViewValueCategory],
   cssSrc:     Seq[String],
   jsSrc:      Seq[String]
 ) extends ViewValueCommon

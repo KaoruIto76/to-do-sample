@@ -54,12 +54,12 @@ class CategoryController @Inject()(
    */
   def showAllCategory() = Action.async { implicit req =>
     for {
-      categories <- CategoryRepository.getAll
+      categorySeq<- CategoryRepository.getAll
     } yield {
 
       val vv = ViewValueCategoryList(
         title      = "カテゴリ一覧",
-        categories = categories.map(ViewValueCategory.create(_)),
+        categorySeq = categorySeq.map(ViewValueCategory.create(_)),
         cssSrc     = Seq("main.css","category.css"),
         jsSrc      = Seq("main.js")
       )      

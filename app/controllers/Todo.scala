@@ -55,21 +55,21 @@ class TodoController @Inject()(
    */
   def showAllTodo() = Action.async { implicit req =>
     for {
-      allTodos    <- TodoRepository.getAll
+      allTodoSeq  <- TodoRepository.getAll
       allCategory <- CategoryRepository.getAll
     } yield {
 
       val categoryMap        = allCategory.map(ca => (ca.id -> ca)).toMap
-      val vvTodoWithCategory = allTodos.map(todo  => {
+      val vvTodoWithCategory = allTodoSeq.map(todo  => {
         (ViewValueTodo.create(todo),ViewValueCategory.create(categoryMap(todo.v.cid)))
       })
 
       // viewvalue 生成
       val vv = ViewValueTodoList(
-        title  = "Todo一覧",
-        todos  = vvTodoWithCategory,
-        cssSrc = Seq("main.css","todo.css"),
-        jsSrc  = Seq("main.js")
+        title   = "Todo一覧",
+        todoSeq = vvTodoWithCategory,
+        cssSrc  = Seq("main.css","todo.css"),
+        jsSrc   = Seq("main.js")
       )
       Ok(views.html.site.todo.List(vv))
     }
@@ -93,10 +93,10 @@ class TodoController @Inject()(
 
             // viewvalue 生成
             val vv = ViewValueTodoList(
-              title  = ca.v.name + "のTodo一覧",
-              todos  = vvTodoWithCategory,
-              cssSrc = Seq("main.css","todo.css"),
-              jsSrc  = Seq("main.js")
+              title   = ca.v.name + "のTodo一覧",
+              todoSeq = vvTodoWithCategory,
+              cssSrc  = Seq("main.css","todo.css"),
+              jsSrc   = Seq("main.js")
             )
             Ok(views.html.site.todo.List(vv))
           }
