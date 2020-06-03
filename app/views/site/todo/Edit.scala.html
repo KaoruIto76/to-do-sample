@@ -7,7 +7,7 @@
 @import lib.model.Todo.Status
 @import helper._
 
-@(vv: model.site.todo.ViewValueTodoForm, todoForm : Form[FormValue], tid: Long)(
+@(vv: model.site.todo.ViewValueTodoForm)(
   implicit request: RequestHeader, messagesProvider: MessagesProvider
 )
 
@@ -15,17 +15,17 @@
 
 @common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
-  @helper.form( action = helper.CSRF(routes.TodoController.edit(tid)) ){
+  @helper.form( action = helper.CSRF(vv.postUrl) ){
     <fieldset class="form">
       @helper.select(
-        field   =  todoForm("categoryId"),
+        field   =  vv.formData("categoryId"),
         options =  vv.allCategory.map(ca => (ca.id.toString,ca.name)),
         '_label -> "カテゴリ",
       )
-      @helper.inputText(todoForm("title"), '_label -> "タイトル")
-      @helper.textarea(todoForm("body"),   '_label -> "内容")
+      @helper.inputText(vv.formData("title"), '_label -> "タイトル")
+      @helper.textarea(vv.formData("body"),   '_label -> "内容")
       @helper.select(
-        field   = todoForm("status"),
+        field   = vv.formData("status"),
         options = Status.values.map(x => (x.code.toString,x.value)),
         '_label -> "カテゴリ",
       )

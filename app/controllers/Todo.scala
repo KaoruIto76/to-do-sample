@@ -41,7 +41,7 @@ class TodoController @Inject()(
       Future.successful(Redirect(routes.TodoController.showAllTodo()))
   }
 
-  // フォームの値をバインド
+  // フォームの定義
   val formData = Form(mapping(
       "categoryId" -> longNumber,
       "title"      -> text.verifying("タイトルを入力してください", {!_.isEmpty()}),
@@ -80,24 +80,29 @@ class TodoController @Inject()(
    */
   def showTodoBySlug(slug: String) = Action.async { implicit req =>
     for {
-      Some(category) <- CategoryRepository.findBySlug(slug)
-      todos          <- TodoRepository.filterByCategoryId(category.id)
-    } yield {
+      category <- CategoryRepository.findBySlug(slug)
+      res      <- category match {
+        case None     => Future.successful(NotFound("データの取得に失敗しました"))
+        case Some(ca) =>
+          for {
+            todoSeq <- TodoRepository.filterByCategoryId(ca.id)
+          } yield {
+            val vvTodoWithCategory = todoSeq.map(todo => {
+              (ViewValueTodo.create(todo),ViewValueCategory.create(ca))
+            })
 
-      val vvTodoWithCategory = todos.map(todo => {
-        (ViewValueTodo.create(todo),ViewValueCategory.create(category))
-      })
-
-      // viewvalue 生成
-      val vv = ViewValueTodoList(
-        title  = category.v.name + "のTodo一覧",
-        todos  = vvTodoWithCategory,
-        cssSrc = Seq("main.css","todo.css"),
-        jsSrc  = Seq("main.js")
-      )
-      Ok(views.html.site.todo.List(vv))
+            // viewvalue 生成
+            val vv = ViewValueTodoList(
+              title  = ca.v.name + "のTodo一覧",
+              todos  = vvTodoWithCategory,
+              cssSrc = Seq("main.css","todo.css"),
+              jsSrc  = Seq("main.js")
+            )
+            Ok(views.html.site.todo.List(vv))
+          }
+        }
+      } yield res
     }
-  }
 
   /**
    * TODO 新規作成ページ
@@ -110,10 +115,12 @@ class TodoController @Inject()(
       val vv = ViewValueTodoForm(
         title       = "Todo新規作成",
         allCategory = allCategory.map(ViewValueCategory.create(_)),
+        formData    = formData,
+        postUrl     = routes.TodoController.add,
         cssSrc      = Seq("main.css","todo.css"),
         jsSrc       = Seq("main.js")
       )
-      Ok(views.html.site.todo.Add(vv,formData))
+      Ok(views.html.site.todo.Add(vv))
     }
   }
 
@@ -123,16 +130,12 @@ class TodoController @Inject()(
   def showEditForm(id: Long) = Action.async { implicit req =>
     for {
       allCategory <- CategoryRepository.getAll
-      task        <- TodoRepository.get(Todo.Id(id))
-      category    <- task match {
-        case Some(ta) => CategoryRepository.get(ta.v.cid)
-        case None     => Future.successful(None)
-      }
+      todo        <- TodoRepository.get(Todo.Id(id))
     } yield {
-      task match {
-        case None    => NotFound("そのIdのTodoは存在しません")
+      todo match {
+        case None    => NotFound("データの取得に失敗しました")
         case Some(t) => {
-          val defaultFormvalue = formData.fill(Todo.FormValue(
+          val formDataWithDefault = formData.fill(Todo.FormValue(
             t.id,
             t.v.title,
             t.v.body,
@@ -142,10 +145,12 @@ class TodoController @Inject()(
           val vv = ViewValueTodoForm(
             title       = "Todo編集",
             allCategory = allCategory.map(ViewValueCategory.create(_)),
+            formData    = formDataWithDefault,
+            postUrl     = routes.TodoController.edit(t.id),
             cssSrc      = Seq("main.css","todo.css"),
             jsSrc       = Seq("main.js")
           )
-          Ok(views.html.site.todo.Edit(vv,defaultFormvalue,t.id))
+          Ok(views.html.site.todo.Edit(vv))
         }
       }
     }
@@ -156,7 +161,7 @@ class TodoController @Inject()(
    */
   def add() = checkToken( Action.async { implicit req =>
     formData.bindFromRequest.fold(
-      errors => Future.successful(BadRequest("failed")),
+      errors => Future.successful(BadRequest("不正な値によりフォームの値をバインドできませんでした")),
       data   => {
         val entity = Todo(None,Category.Id(data.cid),data.title,data.body).toWithNoId
         for {
@@ -180,12 +185,12 @@ class TodoController @Inject()(
    */
   def edit(id: Long) = checkToken(Action.async { implicit req =>
     formData.bindFromRequest.fold(
-      errors => Future.successful(BadRequest("failed")),
+      errors => Future.successful(BadRequest("不正な値によりフォームの値をバインドできませんでした")),
       data   => {
         for {
-          todo   <- TodoRepository.get(Todo.Id(id))
-          _      <- todo match {
-            case None    => Future.successful(NotFound("そのIdのTodoは存在しません"))
+          todo <- TodoRepository.get(Todo.Id(id))
+          _    <- todo match {
+            case None    => Future.successful(NotFound("データの取得に失敗しました"))
             case Some(v) => {
               val newEntity = v.map(_.copy(
                 cid    = Category.Id(data.cid),
@@ -199,10 +204,10 @@ class TodoController @Inject()(
         } yield {
           // viewvalue 生成
           val vv = ViewValueMessage(
-            title       = "Todo編集",
-            message     = "Todoを編集しました",
-            cssSrc      = Seq("main.css"),
-            jsSrc       = Seq("main.js")
+            title   = "Todo編集",
+            message = "Todoを編集しました",
+            cssSrc  = Seq("main.css"),
+            jsSrc   = Seq("main.js")
           )
           Ok(views.html.common.Success(vv))
         }
@@ -215,14 +220,14 @@ class TodoController @Inject()(
    */
   def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {
-      todo   <- TodoRepository.remove(Todo.Id(id))
+      todo <- TodoRepository.remove(Todo.Id(id))
     } yield {
       // factory view value
       val vv = ViewValueMessage(
-        title       = "Todo削除",
-        message     = "Todoを削除しました",
-        cssSrc      = Seq("main.css"),
-        jsSrc       = Seq("main.js")
+        title   = "Todo削除",
+        message = "Todoを削除しました",
+        cssSrc  = Seq("main.css"),
+        jsSrc   = Seq("main.js")
       )
       Ok(views.html.common.Success(vv))
     }

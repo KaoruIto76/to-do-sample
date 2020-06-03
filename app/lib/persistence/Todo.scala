@@ -55,6 +55,14 @@ case class TodoRepository[P <: JdbcProfile]()(implicit val driver: P)
     }
   }
 
+  def bulkRemoveByIds(ids: Seq[Id]): Future[Int] =
+    RunDBAction(TodoTable) { slick =>
+      val entities = slick.filter(_.id inSet ids)
+      for {
+        res <- entities.delete
+      } yield res
+    }
+
   def removeAll: Future[Int] = {
     RunDBAction(TodoTable) { slick =>
       for {

@@ -16,7 +16,7 @@ import Category._
 case class Category(
   id:        Option[Id],          // 管理用ID
   name:      String,              // カテゴリ名
-  slug:      String,              // カテゴリの識別子
+  slug:      String,              // カテゴリのURL用パラメータ
   color:     Color,               // カテゴリを判別する色
   updatedAt: LocalDateTime = NOW, // データ更新日
   createdAt: LocalDateTime = NOW  // データ作成日

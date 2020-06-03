@@ -6,7 +6,7 @@
 @import lib.model.Todo.FormValue
 @import helper._
 
-@(vv: model.site.todo.ViewValueTodoForm, todoForm : Form[FormValue])(
+@(vv: model.site.todo.ViewValueTodoForm)(
   implicit request: RequestHeader, messagesProvider: MessagesProvider
 )
 
@@ -15,15 +15,15 @@
 @common.Default(vv) {
   <div class="add-todo">
     <a class="add-todo__link-to-top" href="@linkToTop"><- Homeに戻る</a>
-    @helper.form( action = helper.CSRF(routes.TodoController.add) ){
+    @helper.form( action = helper.CSRF(vv.postUrl) ){
       <fieldset class="form">
         @helper.select(
-          field   =  todoForm("categoryId"),
+          field   =  vv.formData("categoryId"),
           options =  vv.allCategory.map(ca => options((ca.id.toString,ca.name))).flatten,
           '_label -> "カテゴリ",
         )
-        @helper.inputText(todoForm("title"), '_label -> "タイトル")
-        @helper.textarea(todoForm("body"),   '_label -> "内容")
+        @helper.inputText(vv.formData("title"), '_label -> "タイトル")
+        @helper.textarea(vv.formData("body"),   '_label -> "内容")
       </fieldset>
       <input type="submit" value="追加" class="add-todo__submit">
     }

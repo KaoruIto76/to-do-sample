@@ -14,7 +14,7 @@ POST    /category/$id<[0-9]+>/edit    controllers.CategoryController.edit(id: Lo
 POST    /category/$id<[0-9]+>/delete  controllers.CategoryController.delete(id: Long)
 
 GET     /todo/all                 controllers.TodoController.showAllTodo
-GET     /todo/:slug               controllers.TodoController.showTodoBySlug(slug: String)
+GET     /todo/slug/:slug          controllers.TodoController.showTodoBySlug(slug: String)
 GET     /todo/add/form            controllers.TodoController.showAddForm
 POST    /todo/add                 controllers.TodoController.add
 GET     /todo/$id<[0-9]+>         controllers.TodoController.showEditForm(id: Long)

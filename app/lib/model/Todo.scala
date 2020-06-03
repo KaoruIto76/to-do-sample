@@ -41,7 +41,6 @@ object Todo {
   }
 
   // フォームのデータをbindするためのmodel
-  // (こいつをどこに置くべきか悩んでいます。app/と同じ階層にform/を切るか)
   case class FormValue(
     cid:    Long,
     title:  String,

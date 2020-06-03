@@ -30,17 +30,17 @@ case class CategoryTable[P <: JdbcProfile]()(implicit val driver: P)
   // --[ テーブルのカラム定義 ] ----------------------------------------
   class Table(tag: Tag) extends BasicTable(tag, "to_do_category") {
     // Columns
-    /* @1 */ def id        = column[Category.Id]    ("id",             O.UInt64, O.PrimaryKey, O.AutoInc)
-    /* @2 */ def name      = column[String]         ("name",           O.Utf8Char255)
-    /* @3 */ def slug      = column[String]         ("slug",           O.AsciiChar8)
-    /* @4 */ def color     = column[Category.Color] ("category_color", O.UInt8)
-    /* @5 */ def updatedAt = column[LocalDateTime]  ("updated_at",     O.TsCurrent)
-    /* @6 */ def createdAt = column[LocalDateTime]  ("created_at",     O.Ts)
+    /* @1 */ def id        = column[Category.Id]    ("id",          O.UInt64, O.PrimaryKey, O.AutoInc)
+    /* @2 */ def name      = column[String]         ("name",        O.Utf8Char255)
+    /* @3 */ def slug      = column[String]         ("slug",        O.AsciiChar8)
+    /* @4 */ def color     = column[Category.Color] ("color",       O.UInt8)
+    /* @5 */ def updatedAt = column[LocalDateTime]  ("updated_at",  O.TsCurrent)
+    /* @6 */ def createdAt = column[LocalDateTime]  ("created_at",  O.Ts)
 
     // ユニークキー制約
     def key01 = index("key01", slug, unique=true)    
 
-    // カラムをtupleで表現
+    // DBとのmapping用
     type TableElementTuple = (
       Option[Category.Id], String, String, Category.Color, LocalDateTime, LocalDateTime
     )

@@ -6,20 +6,18 @@
 @import lib.model.Category.FormValue
 @import helper._
 
-@(vv: model.site.category.ViewValueCategoryForm, categoryForm : Form[FormValue], cid: Long)(
-  implicit request: RequestHeader, messagesProvider: MessagesProvider
-)
+@(vv: model.site.category.ViewValueCategoryForm)(implicit request: RequestHeader, messagesProvider: MessagesProvider)
 
 @linkToTop = @{ controllers.routes.HomeController.index().url }
 
 @common.Default(vv) {
   <a class="link-to-top" href="@linkToTop"><- Homeに戻る</a>
-  @helper.form( action = helper.CSRF(routes.CategoryController.edit(cid)) ){
+  @helper.form( action = helper.CSRF(vv.postUrl)){
     <fieldset class="form">
-      @helper.inputText(categoryForm("name"), '_label -> "カテゴリ名")
-      @helper.inputText(categoryForm("slug"), '_label -> "slug")
+      @helper.inputText(vv.formData("name"), '_label -> "カテゴリ名")
+      @helper.inputText(vv.formData("slug"), '_label -> "slug")
       @helper.select(
-        field   =  categoryForm("color"),
+        field   =  vv.formData("color"),
         options =  vv.colors.map(c => (c.code.toString,c.value)),
         '_label -> "カテゴリ",
       )

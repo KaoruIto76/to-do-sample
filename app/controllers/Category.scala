@@ -26,6 +26,7 @@ import lib.persistence.default._
 import model.common.ViewValueMessage
 import model.common.component.ViewValueCategory
 import model.site.category._
+import scala.languageFeature.postfixOps
 
 class CategoryController @Inject()(
   val controllerComponents: ControllerComponents,
@@ -76,7 +77,7 @@ class CategoryController @Inject()(
       category match {
         case None     => NotFound("そのIDのカテゴリは存在しません")
         case Some(ca) => {
-          val defaultData = formData.fill(Category.FormValue(
+          val formDataWithDefault = formData.fill(Category.FormValue(
             ca.v.name,
             ca.v.slug,
             ca.v.color.code.toInt
@@ -85,10 +86,12 @@ class CategoryController @Inject()(
           val vv = ViewValueCategoryForm(
             title    = "カテゴリ編集",
             colors   = Category.Color.allColors,
+            formData = formDataWithDefault,
+            postUrl  = routes.CategoryController.edit(ca.id),
             cssSrc   = Seq("main.css","category.css"),
             jsSrc    = Seq("main.js")
           )
-          Ok(views.html.site.category.Edit(vv,defaultData,ca.id))
+          Ok(views.html.site.category.Edit(vv))
         }
       }
     }
@@ -102,10 +105,12 @@ class CategoryController @Inject()(
     val vv = ViewValueCategoryForm(
       title    = "カテゴリ新規作成",
       colors   = Category.Color.allColors,
+      formData = formData,
+      postUrl  = routes.CategoryController.add(),
       cssSrc   = Seq("main.css","category.css"),
       jsSrc    = Seq("main.js")
     )
-    Ok(views.html.site.category.Add(vv,formData))
+    Ok(views.html.site.category.Add(vv))
   }
 
   /**
@@ -149,7 +154,9 @@ class CategoryController @Inject()(
                 slug  = data.slug,
                 color = Category.Color(data.color.toShort)
               ))
-              CategoryRepository.update(entity)
+              for {
+                res <- CategoryRepository.update(entity)
+              } yield res
             }
           }
         } yield {
@@ -170,8 +177,9 @@ class CategoryController @Inject()(
    */
   def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {
-      _  <- CategoryRepository.remove(Category.Id(id))
-      _  <- TodoRepository.removeAll
+      _       <- CategoryRepository.remove(Category.Id(id))
+      todoSeq <- TodoRepository.filterByCategoryId(Category.Id(id))
+      _       <- TodoRepository.bulkRemoveByIds(todoSeq.map(_.id))
     } yield {
       
       val vv = ViewValueMessage(
