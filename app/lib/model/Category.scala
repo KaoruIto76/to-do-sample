@@ -39,7 +39,7 @@ object Category {
     case object COLOR_ORANGE extends Color(code = 4, value = "#ff8c00")
     case object COLOR_RED    extends Color(code = 5, value = "#ff0000")
     case object COLOR_GRAY   extends Color(code = 6, value = "#696969")
-    case object COLOR_WHITE  extends Color(code = 7, value = "grey")
+    case object COLOR_WHITE  extends Color(code = 7, value = "#ffffff")
 
     // 全カテゴリカラーを取得
     def allColors:Seq[Category.Color] = this.values

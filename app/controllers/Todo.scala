@@ -216,7 +216,7 @@ class TodoController @Inject()(
   }, CSRFErrorHandler)
 
   /**
-   * TODO を削除
+   * TODO をDELETE
    */
   def delete(id: Long) = checkToken(Action.async { implicit req =>
     for {
