@@ -23,7 +23,7 @@ CREATE TABLE `to_do` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `category_id` bigint(20) unsigned NOT NULL,
   `title` VARCHAR(255) NOT NULL,
-  `body` VARCHAR(255) NOT NULL,
+  `body` TEXT NOT NULL,
   `status` TINYINT NOT NULL,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
